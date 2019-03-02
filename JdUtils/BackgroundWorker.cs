@@ -29,30 +29,15 @@ namespace JdUtils
 
         public event LogHandler Log;
 
-        public void Wait(Action action, int delay)
-        {
-            ExecuteSafe(WaitWorker(delay, action), null);
-        }
-
         public void Execute(Action action, Action success = null, ErrorHandler failure = null)
         {
-            ExecuteSafe(WorkerWrapper(action, success), failure);
+            ExecuteSafe(Worker(action, success), failure);
         }
 
-        private Func<Task> WaitWorker(int delay, Action success)
+        private Action Worker(Action worker, Action success)
         {
-            return async () =>
-            {
-                await Task.Delay(delay);
-                PostToUi(success);
-            };
-        }
-
-        private Func<Task> WorkerWrapper(Action worker, Action success)
-        {
-            return async () =>
-            {
-                await Task.CompletedTask;
+            return () => 
+            { 
                 worker.Invoke();
                 PostToUi(success);
             };
@@ -90,13 +75,22 @@ namespace JdUtils
             }
         }
 
-        private void ExecuteSafe(Func<Task> worker, ErrorHandler failure)
+        private void ExecuteSafe(Action worker, ErrorHandler failure, int delay = 0)
         {
             Task.Run(async () =>
             {
                 try
                 {
-                    await worker.Invoke();
+                    if (delay == 0)
+                    {
+                        await Task.CompletedTask;
+                    }
+                    else
+                    {
+                        await Task.Delay(delay);
+                    }
+
+                    worker.Invoke();
                 }
                 catch (Exception e)
                 {
