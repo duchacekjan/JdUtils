@@ -29,6 +29,17 @@ namespace JdUtils
 
         public event LogHandler Log;
 
+        private async Task WaitWorker(int delay)
+        {
+            await Task.Delay(delay);
+        }
+
+        private async Task WorkerWrapper(Action action)
+        {
+            await Task.CompletedTask;
+            action.Invoke();
+        }
+
         private async Task ExecuteSafe<T, TResult>(Func<T, Task<TResult>> worker, Action<TResult> success = null, ErrorHandler failure = null, T args = default(T))
         {
             try
