@@ -29,18 +29,31 @@ namespace JdUtils
 
         public event LogHandler Log;
 
-        private async Task WaitWorker(int delay)
+        public void Wait(Action action, int delay)
         {
-            await Task.Delay(delay);
+            Task.Run(() => ExecuteSafe(WaitWorker(delay), action, null));
         }
 
-        private async Task WorkerWrapper(Action action)
+        public void Execute(Action action, Action success = null, ErrorHandler failure = null)
         {
-            await Task.CompletedTask;
-            action.Invoke();
+            Task.Run(() => ExecuteSafe(WorkerWrapper(action), success, failure));
         }
 
-        private async Task ExecuteSafe<T, TResult>(Func<T, Task<TResult>> worker, Action<TResult> success = null, ErrorHandler failure = null, T args = default(T))
+        private Func<Task> WaitWorker(int delay)
+        {
+            return async () => { await Task.Delay(delay); };
+        }
+
+        private Func<Task> WorkerWrapper(Action action)
+        {
+            return async () =>
+            {
+                await Task.CompletedTask;
+                action.Invoke();
+            };
+        }
+
+        private async Task ExecuteSafe<T, TResult>(Func<T, Task<TResult>> worker, Action<TResult> success, ErrorHandler failure, T args = default(T))
         {
             try
             {
@@ -56,7 +69,7 @@ namespace JdUtils
             }
         }
 
-        private async Task ExecuteSafe<T>(Func<Task<T>> worker, Action<T> success = null, ErrorHandler failure = null)
+        private async Task ExecuteSafe<T>(Func<Task<T>> worker, Action<T> success, ErrorHandler failure)
         {
             try
             {
@@ -72,7 +85,7 @@ namespace JdUtils
             }
         }
 
-        private async Task ExecuteSafe(Func<Task> worker, Action success = null, ErrorHandler failure = null)
+        private async Task ExecuteSafe(Func<Task> worker, Action success, ErrorHandler failure)
         {
             try
             {
@@ -103,7 +116,7 @@ namespace JdUtils
                 }
             });
         }
-        
+
         private void PostToUi(Action action)
         {
             if (m_uiDispatcher.CheckAccess())
