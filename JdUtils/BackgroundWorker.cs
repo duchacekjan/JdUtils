@@ -28,8 +28,40 @@ namespace JdUtils
         public event ErrorHandler Error;
 
         public event LogHandler Log;
-        
-        private async Task ExecuteSafe(Func<Task> worker, Action success = null, Action<Exception> failure = null)
+
+        private async Task ExecuteSafe<T, TResult>(Func<T, Task<TResult>> worker, Action<TResult> success = null, ErrorHandler failure = null, T args = default(T))
+        {
+            try
+            {
+                var result = await worker.Invoke(args);
+                PostToUi(() =>
+                {
+                    success?.Invoke(result);
+                });
+            }
+            catch (Exception e)
+            {
+                OnException(e, failure);
+            }
+        }
+
+        private async Task ExecuteSafe<T>(Func<Task<T>> worker, Action<T> success = null, ErrorHandler failure = null)
+        {
+            try
+            {
+                var result = await worker.Invoke();
+                PostToUi(() =>
+                {
+                    success?.Invoke(result);
+                });
+            }
+            catch (Exception e)
+            {
+                OnException(e, failure);
+            }
+        }
+
+        private async Task ExecuteSafe(Func<Task> worker, Action success = null, ErrorHandler failure = null)
         {
             try
             {
@@ -41,19 +73,24 @@ namespace JdUtils
             }
             catch (Exception e)
             {
-                Log?.Invoke(e.Message, e);
-                PostToUi(() =>
-                {
-                    if (failure == null)
-                    {
-                        Error?.Invoke(e);
-                    }
-                    else
-                    {
-                        failure.Invoke(e);
-                    }
-                });
+                OnException(e, failure);
             }
+        }
+
+        private void OnException(Exception exception, ErrorHandler failure)
+        {
+            Log?.Invoke(exception.Message, exception);
+            PostToUi(() =>
+            {
+                if (failure == null)
+                {
+                    Error?.Invoke(exception);
+                }
+                else
+                {
+                    failure.Invoke(exception);
+                }
+            });
         }
         
         private void PostToUi(Action action)
