@@ -25,25 +25,42 @@ namespace JdUtils
             m_uiDispatcher = uiDispatcher;
         }
 
-        public event ErrorHandler Error;
+        public event FailureHandler Error;
 
         public event LogHandler Log;
 
-        public void Execute(Action action, Action success = null, ErrorHandler failure = null)
+        public void Execute(Action action, Action success = null, FailureHandler failure = null)
         {
             ExecuteSafe(Worker(action, success), failure);
         }
 
+        public void Execute<T>(Func<T> action, Action<T> success = null, FailureHandler failure = null)
+        {
+            ExecuteSafe(Worker(action, success), failure);
+        }
+
+        private Action Worker<T>(Func<T> worker, Action<T> success)
+        {
+            return () =>
+            {
+                var result = worker.Invoke();
+                PostToUi(() =>
+                {
+                    success?.Invoke(result);
+                });
+            };
+        }
+
         private Action Worker(Action worker, Action success)
         {
-            return () => 
-            { 
+            return () =>
+            {
                 worker.Invoke();
                 PostToUi(success);
             };
         }
 
-        private async Task ExecuteSafe<T, TResult>(Func<T, Task<TResult>> worker, Action<TResult> success, ErrorHandler failure, T args = default(T))
+        private async Task ExecuteSafe<T, TResult>(Func<T, Task<TResult>> worker, Action<TResult> success, FailureHandler failure, T args = default(T))
         {
             try
             {
@@ -58,24 +75,8 @@ namespace JdUtils
                 OnException(e, failure);
             }
         }
-
-        private async Task ExecuteSafe<T>(Func<Task<T>> worker, Action<T> success, ErrorHandler failure)
-        {
-            try
-            {
-                var result = await worker.Invoke();
-                PostToUi(() =>
-                {
-                    success?.Invoke(result);
-                });
-            }
-            catch (Exception e)
-            {
-                OnException(e, failure);
-            }
-        }
-
-        private void ExecuteSafe(Action worker, ErrorHandler failure, int delay = 0)
+        
+        private void ExecuteSafe(Action worker, FailureHandler failure, int delay = 0)
         {
             Task.Run(async () =>
             {
@@ -99,7 +100,7 @@ namespace JdUtils
             });
         }
 
-        private void OnException(Exception exception, ErrorHandler failure)
+        private void OnException(Exception exception, FailureHandler failure)
         {
             Log?.Invoke(exception.Message, exception);
             PostToUi(() =>
