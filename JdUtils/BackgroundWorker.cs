@@ -39,6 +39,23 @@ namespace JdUtils
             ExecuteSafe(Worker(action, success), failure);
         }
 
+        public void Execute<T, TResult>(Func<T, TResult> action, T param, Action<TResult> success = null, FailureHandler failure = null)
+        {
+            ExecuteSafe(Worker(action, param, success), failure);
+        }
+
+        private Action Worker<T, TResult>(Func<T, TResult> worker, T param, Action<TResult> success)
+        {
+            return () =>
+            {
+                var result = worker.Invoke(param);
+                PostToUi(() =>
+                {
+                    success?.Invoke(result);
+                });
+            };
+        }
+
         private Action Worker<T>(Func<T> worker, Action<T> success)
         {
             return () =>
@@ -58,22 +75,6 @@ namespace JdUtils
                 worker.Invoke();
                 PostToUi(success);
             };
-        }
-
-        private async Task ExecuteSafe<T, TResult>(Func<T, Task<TResult>> worker, Action<TResult> success, FailureHandler failure, T args = default(T))
-        {
-            try
-            {
-                var result = await worker.Invoke(args);
-                PostToUi(() =>
-                {
-                    success?.Invoke(result);
-                });
-            }
-            catch (Exception e)
-            {
-                OnException(e, failure);
-            }
         }
         
         private void ExecuteSafe(Action worker, FailureHandler failure, int delay = 0)
