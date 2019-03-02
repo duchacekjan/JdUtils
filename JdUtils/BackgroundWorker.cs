@@ -44,6 +44,11 @@ namespace JdUtils
             ExecuteSafe(Worker(action, param, success), failure);
         }
 
+        public void WaitAndExecute(Action action, int delay, FailureHandler failure = null)
+        {
+            ExecuteSafe(action, failure, delay);
+        }
+
         private Action Worker<T, TResult>(Func<T, TResult> worker, T param, Action<TResult> success)
         {
             return () =>
