@@ -31,25 +31,30 @@ namespace JdUtils
 
         public void Wait(Action action, int delay)
         {
-            Task.Run(() => ExecuteSafe(WaitWorker(delay), action, null));
+            ExecuteSafe(WaitWorker(delay, action), null);
         }
 
         public void Execute(Action action, Action success = null, ErrorHandler failure = null)
         {
-            Task.Run(() => ExecuteSafe(WorkerWrapper(action), success, failure));
+            ExecuteSafe(WorkerWrapper(action, success), failure);
         }
 
-        private Func<Task> WaitWorker(int delay)
+        private Func<Task> WaitWorker(int delay, Action success)
         {
-            return async () => { await Task.Delay(delay); };
+            return async () =>
+            {
+                await Task.Delay(delay);
+                PostToUi(success);
+            };
         }
 
-        private Func<Task> WorkerWrapper(Action action)
+        private Func<Task> WorkerWrapper(Action worker, Action success)
         {
             return async () =>
             {
                 await Task.CompletedTask;
-                action.Invoke();
+                worker.Invoke();
+                PostToUi(success);
             };
         }
 
@@ -85,20 +90,19 @@ namespace JdUtils
             }
         }
 
-        private async Task ExecuteSafe(Func<Task> worker, Action success, ErrorHandler failure)
+        private void ExecuteSafe(Func<Task> worker, ErrorHandler failure)
         {
-            try
+            Task.Run(async () =>
             {
-                await worker.Invoke();
-                PostToUi(() =>
+                try
                 {
-                    success?.Invoke();
-                });
-            }
-            catch (Exception e)
-            {
-                OnException(e, failure);
-            }
+                    await worker.Invoke();
+                }
+                catch (Exception e)
+                {
+                    OnException(e, failure);
+                }
+            });
         }
 
         private void OnException(Exception exception, ErrorHandler failure)
