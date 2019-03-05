@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JdUtils", "JdUtils\JdUtils.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JdComponents", "JdComponents\JdComponents.csproj", "{6C322EE3-4D75-413D-BCCD-85B85482C8EE}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JdComponents.Demo", "JdComponents.Demo\JdComponents.Demo.csproj", "{AA8BE44C-F377-448E-9E8D-1C3085A2B699}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{6C322EE3-4D75-413D-BCCD-85B85482C8EE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6C322EE3-4D75-413D-BCCD-85B85482C8EE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6C322EE3-4D75-413D-BCCD-85B85482C8EE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AA8BE44C-F377-448E-9E8D-1C3085A2B699}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AA8BE44C-F377-448E-9E8D-1C3085A2B699}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AA8BE44C-F377-448E-9E8D-1C3085A2B699}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AA8BE44C-F377-448E-9E8D-1C3085A2B699}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
