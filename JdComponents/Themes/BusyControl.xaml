@@ -10,7 +10,9 @@
                             BorderThickness="{TemplateBinding BorderThickness}">
                         <Grid>
                             <ContentPresenter/>
-                            <Border Name="PART_Overlay">
+                            <Border Name="PART_Overlay"
+                                    Panel.ZIndex="1000"
+                                    Visibility="Collapsed">
 
                             </Border>
                         </Grid>

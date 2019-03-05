@@ -4,6 +4,10 @@
              xmlns:local="clr-namespace:JdComponents.Demo"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-         
+         <ResourceDictionary>
+             <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/JdComponents;component/Themes/JdComponents.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+         </ResourceDictionary>
     </Application.Resources>
 </Application>

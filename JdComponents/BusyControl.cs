@@ -6,7 +6,7 @@ namespace JdComponents
     /// <summary>
     /// Control for indication of work on background
     /// </summary>
-    public class BusyControl : Control
+    public class BusyControl : ContentControl
     {
         public static readonly DependencyProperty IsBusyProperty;
 
