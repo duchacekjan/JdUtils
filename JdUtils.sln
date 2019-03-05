@@ -5,6 +5,8 @@ VisualStudioVersion = 15.0.28307.421
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JdUtils", "JdUtils\JdUtils.csproj", "{3D55B94F-9674-4C9C-8614-135795E39D38}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JdComponents", "JdComponents\JdComponents.csproj", "{6C322EE3-4D75-413D-BCCD-85B85482C8EE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{3D55B94F-9674-4C9C-8614-135795E39D38}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3D55B94F-9674-4C9C-8614-135795E39D38}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3D55B94F-9674-4C9C-8614-135795E39D38}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6C322EE3-4D75-413D-BCCD-85B85482C8EE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6C322EE3-4D75-413D-BCCD-85B85482C8EE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6C322EE3-4D75-413D-BCCD-85B85482C8EE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6C322EE3-4D75-413D-BCCD-85B85482C8EE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
