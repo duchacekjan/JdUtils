@@ -1,6 +1,8 @@
 ﻿namespace JdUtils.Delegates
 {
-    public delegate void LogHandler(string message, System.Exception exception);
-
-    public delegate void FailureHandler(System.Exception exception);
+    /// <summary>
+    /// Delegate for handling exception
+    /// </summary>
+    /// <param name="exception">Exception to be handled</param>
+    public delegate void ExceptionHandler(System.Exception exception);
 }
