@@ -77,6 +77,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\JdComponents.Utils\JdComponents.Utils.csproj">
+      <Project>{1892dc83-1177-43f1-a149-389e7a13d864}</Project>
+      <Name>JdComponents.Utils</Name>
+    </ProjectReference>
     <ProjectReference Include="..\JdComponents\JdComponents.csproj">
       <Project>{6c322ee3-4d75-413d-bccd-85b85482c8ee}</Project>
       <Name>JdComponents</Name>

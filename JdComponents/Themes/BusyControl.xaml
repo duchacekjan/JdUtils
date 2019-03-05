@@ -13,8 +13,8 @@
                             <ContentPresenter Content="{TemplateBinding Content}"/>
                             <Border Name="PART_Overlay"
                                     Panel.ZIndex="1000"
-                                    Visibility="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=IsBusy, Converter={cnv:BoolToVisibilityConverter}}">
-
+                                    Visibility="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=IsBusy, Converter={cnv:BoolToVisibilityConverter}}"
+                                    Background="#c2c2c2c2">
                             </Border>
                         </Grid>
                     </Border>

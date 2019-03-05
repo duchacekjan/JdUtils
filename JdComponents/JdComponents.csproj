@@ -73,9 +73,9 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\JdComponents.Utils\JdComponens.Utils.csproj">
+    <ProjectReference Include="..\JdComponents.Utils\JdComponents.Utils.csproj">
       <Project>{1892dc83-1177-43f1-a149-389e7a13d864}</Project>
-      <Name>JdComponens.Utils</Name>
+      <Name>JdComponents.Utils</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

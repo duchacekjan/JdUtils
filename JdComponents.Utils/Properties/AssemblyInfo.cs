@@ -5,11 +5,11 @@ using System.Windows.Markup;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("JdComponent.Utils")]
+[assembly: AssemblyTitle("JdComponents.Utils")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("FULLCOM systems s.r.o.")]
-[assembly: AssemblyProduct("JdComponent.Utils")]
+[assembly: AssemblyProduct("JdComponents.Utils")]
 [assembly: AssemblyCopyright("Copyright © FULLCOM systems s.r.o. 2019")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -34,4 +34,4 @@ using System.Windows.Markup;
 // [assembly: AssemblyVersion("1.0.*")]
 [assembly: AssemblyVersion("1.0.0.0")]
 [assembly: AssemblyFileVersion("1.0.0.0")]
-[assembly: XmlnsDefinition("jd:converters","JdComponents.Utils.Converters")]
+[assembly: XmlnsDefinition("jd:converters", "JdComponents.Utils.Converters")]
