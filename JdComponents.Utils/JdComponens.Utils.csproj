@@ -7,8 +7,8 @@
     <ProjectGuid>{1892DC83-1177-43F1-A149-389E7A13D864}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>JdComponent.Utils</RootNamespace>
-    <AssemblyName>JdComponent.Utils</AssemblyName>
+    <RootNamespace>JdComponents.Utils</RootNamespace>
+    <AssemblyName>JdComponents.Utils</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
