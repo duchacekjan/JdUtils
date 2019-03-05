@@ -4,12 +4,12 @@
     <Style TargetType="{x:Type c:BusyControl}">
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate>
+                <ControlTemplate TargetType="{x:Type c:BusyControl}">
                     <Border Background="{TemplateBinding Background}"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}">
                         <Grid>
-                            <ContentPresenter/>
+                            <ContentPresenter Content="{TemplateBinding Content}"/>
                             <Border Name="PART_Overlay"
                                     Panel.ZIndex="1000"
                                     Visibility="Collapsed">
