@@ -5,10 +5,11 @@
                     xmlns:resx="clr-namespace:JdComponents.Properties">
     <Style TargetType="{x:Type c:BusyControl}">
         <Setter Property="IndicatorBackground" Value="#c2c2c2c2"/>
+        <Setter Property="IndicatorContent" Value="{x:Static resx:Resources.Loading}"/>
         <Setter Property="IndicatorTemplate">
             <Setter.Value>
-                <DataTemplate>
-                    <TextBlock Text="{x:Static resx:Resources.Loading}"
+                <DataTemplate DataType="{x:Type ContentControl}">
+                    <TextBlock Text="{Binding}"
                                VerticalAlignment="Center"
                                HorizontalAlignment="Center"/>
                 </DataTemplate>
@@ -26,7 +27,8 @@
                                     Panel.ZIndex="1000"
                                     Visibility="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=IsBusy, Converter={cnv:BoolToVisibilityConverter}}"
                                     Background="{TemplateBinding IndicatorBackground}">
-                                <ContentControl ContentTemplate="{TemplateBinding IndicatorTemplate}"/>
+                                <ContentControl ContentTemplate="{TemplateBinding IndicatorTemplate}"
+                                                Content="{TemplateBinding IndicatorContent}"/>
                             </Border>
                         </Grid>
                     </Border>

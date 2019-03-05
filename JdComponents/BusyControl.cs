@@ -12,6 +12,7 @@ namespace JdComponents
         public static readonly DependencyProperty IsBusyProperty;
         public static readonly DependencyProperty IndicatorBackgroundProperty;
         public static readonly DependencyProperty IndicatorTemplateProperty;
+        public static readonly DependencyProperty IndicatorContentProperty;
 
         /// <summary>
         /// Static constructor for <see cref="DependencyProperty"/> initialization
@@ -22,6 +23,7 @@ namespace JdComponents
             IsBusyProperty = DependencyProperty.Register(nameof(IsBusy), typeof(bool), owner);
             IndicatorBackgroundProperty = DependencyProperty.Register(nameof(IndicatorBackground), typeof(Brush), owner);
             IndicatorTemplateProperty = DependencyProperty.Register(nameof(IndicatorTemplate), typeof(DataTemplate), owner);
+            IndicatorContentProperty = DependencyProperty.Register(nameof(IndicatorContent), typeof(object), owner);
             DefaultStyleKeyProperty.OverrideMetadata(owner, new FrameworkPropertyMetadata(owner));
         }
 
@@ -36,9 +38,18 @@ namespace JdComponents
             PreviewMouseDown += HandleIfBusy;
             PreviewMouseWheel += HandleIfBusy;
         }
+
+        /// <summary>
+        /// Text of busy indicator
+        /// </summary>
+        public object IndicatorContent
+        {
+            get => GetValue(IndicatorContentProperty);
+            set => SetValue(IndicatorContentProperty, value);
+        }
         
         /// <summary>
-        /// Data template of indicator
+        /// Data template of busy indicator
         /// </summary>
         public DataTemplate IndicatorTemplate
         {
