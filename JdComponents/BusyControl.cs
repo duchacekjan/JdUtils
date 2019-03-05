@@ -1,5 +1,6 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 
 namespace JdComponents
 {
@@ -9,6 +10,7 @@ namespace JdComponents
     public class BusyControl : ContentControl
     {
         public static readonly DependencyProperty IsBusyProperty;
+        public static readonly DependencyProperty IndicatorBackgroundProperty;
 
         /// <summary>
         /// Static constructor for <see cref="DependencyProperty"/> initialization
@@ -17,6 +19,7 @@ namespace JdComponents
         {
             var owner = typeof(BusyControl);
             IsBusyProperty = DependencyProperty.Register(nameof(IsBusy), typeof(bool), owner);
+            IndicatorBackgroundProperty = DependencyProperty.Register(nameof(IndicatorBackground), typeof(Brush), owner);
             DefaultStyleKeyProperty.OverrideMetadata(owner, new FrameworkPropertyMetadata(owner));
         }
 
@@ -32,9 +35,10 @@ namespace JdComponents
             PreviewMouseWheel += HandleIfBusy;
         }
 
-        private void HandleIfBusy(object sender, RoutedEventArgs e)
+        public Brush IndicatorBackground
         {
-            e.Handled = IsBusy;
+            get => (Brush)GetValue(IndicatorBackgroundProperty);
+            set => SetValue(IndicatorBackgroundProperty, value);
         }
 
         /// <summary>
@@ -44,6 +48,16 @@ namespace JdComponents
         {
             get => (bool)GetValue(IsBusyProperty);
             set => SetValue(IsBusyProperty, value);
+        }
+
+        /// <summary>
+        /// Handles preview events when busy
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void HandleIfBusy(object sender, RoutedEventArgs e)
+        {
+            e.Handled = IsBusy;
         }
     }
 }

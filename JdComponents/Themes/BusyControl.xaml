@@ -3,6 +3,7 @@
                     xmlns:c="clr-namespace:JdComponents"
                     xmlns:cnv="jd:converters">
     <Style TargetType="{x:Type c:BusyControl}">
+        <Setter Property="IndicatorBackground" Value="#c2c2c2c2"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type c:BusyControl}">
@@ -14,7 +15,7 @@
                             <Border Name="PART_Overlay"
                                     Panel.ZIndex="1000"
                                     Visibility="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=IsBusy, Converter={cnv:BoolToVisibilityConverter}}"
-                                    Background="#c2c2c2c2">
+                                    Background="{TemplateBinding IndicatorBackground}">
                             </Border>
                         </Grid>
                     </Border>
