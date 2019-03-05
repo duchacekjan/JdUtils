@@ -1,13 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Data;
 using System.Windows.Markup;
 
-namespace JdComponent.Utils.Converters
+namespace JdComponents.Utils.Converters
 {
     /// <summary>
     /// Common base for multi value converters with support of <see cref="MarkupExtension"/>

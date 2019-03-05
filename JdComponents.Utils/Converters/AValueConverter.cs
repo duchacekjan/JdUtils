@@ -3,7 +3,7 @@ using System.Globalization;
 using System.Windows.Data;
 using System.Windows.Markup;
 
-namespace JdComponent.Utils.Converters
+namespace JdComponents.Utils.Converters
 {
     /// <summary>
     /// Common base for value converters with support of <see cref="MarkupExtension"/>
