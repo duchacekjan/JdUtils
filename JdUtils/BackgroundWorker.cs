@@ -112,6 +112,37 @@ namespace JdUtils
         }
 
         /// <summary>
+        /// Invokes action on UI thread
+        /// </summary>
+        /// <param name="action"></param>
+        /// <param name="parameter"></param>
+        public void PostToUi<T>(Action<T> action, T parameter)
+        {
+            void Wrapper()
+            {
+                action?.Invoke(parameter);
+            }
+
+            PostToUi(Wrapper);
+        }
+
+        /// <summary>
+        /// Invokes action on UI thread
+        /// </summary>
+        /// <param name="action"></param>
+        public void PostToUi(Action action)
+        {
+            if (m_uiDispatcher.CheckAccess())
+            {
+                action?.Invoke();
+            }
+            else
+            {
+                m_uiDispatcher.Invoke(action);
+            }
+        }
+
+        /// <summary>
         /// Creates wrapping action to handle <paramref name="worker"/> on background thread and
         /// then synchronize <paramref name="success"/> on UI thread
         /// </summary>
@@ -234,37 +265,6 @@ namespace JdUtils
             else if (UnhandledError != null)
             {
                 PostToUi(UnhandledError.Invoke, exception);
-            }
-        }
-
-        /// <summary>
-        /// Invokes action on UI thread
-        /// </summary>
-        /// <param name="action"></param>
-        /// <param name="parameter"></param>
-        private void PostToUi<T>(Action<T> action, T parameter)
-        {
-            void Wrapper()
-            {
-                action?.Invoke(parameter);
-            }
-
-            PostToUi(Wrapper);
-        }
-
-        /// <summary>
-        /// Invokes action on UI thread
-        /// </summary>
-        /// <param name="action"></param>
-        private void PostToUi(Action action)
-        {
-            if (m_uiDispatcher.CheckAccess())
-            {
-                action?.Invoke();
-            }
-            else
-            {
-                m_uiDispatcher.Invoke(action);
             }
         }
     }
