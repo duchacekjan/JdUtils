@@ -126,10 +126,7 @@ namespace JdUtils
             return () =>
             {
                 var result = worker.Invoke(param);
-                PostToUi(() =>
-                {
-                    success?.Invoke(result);
-                });
+                PostToUi(success, result);
             };
         }
 
@@ -146,10 +143,7 @@ namespace JdUtils
             return () =>
             {
                 var result = worker.Invoke();
-                PostToUi(() =>
-                {
-                    success?.Invoke(result);
-                });
+                PostToUi(success, result);
             };
         }
 
@@ -167,10 +161,7 @@ namespace JdUtils
             return () =>
             {
                 worker.Invoke(param);
-                PostToUi(() =>
-                {
-                    success?.Invoke();
-                });
+                PostToUi(success);
             };
         }
 
@@ -236,17 +227,29 @@ namespace JdUtils
         private void OnException(Exception exception, ExceptionHandler failure)
         {
             LogError?.Invoke(exception);
-            PostToUi(() =>
+            if (failure != null)
             {
-                if (failure == null)
-                {
-                    UnhandledError?.Invoke(exception);
-                }
-                else
-                {
-                    failure.Invoke(exception);
-                }
-            });
+                PostToUi(failure.Invoke, exception);
+            }
+            else if (UnhandledError != null)
+            {
+                PostToUi(UnhandledError.Invoke, exception);
+            }
+        }
+
+        /// <summary>
+        /// Invokes action on UI thread
+        /// </summary>
+        /// <param name="action"></param>
+        /// <param name="parameter"></param>
+        private void PostToUi<T>(Action<T> action, T parameter)
+        {
+            void Wrapper()
+            {
+                action?.Invoke(parameter);
+            }
+
+            PostToUi(Wrapper);
         }
 
         /// <summary>
