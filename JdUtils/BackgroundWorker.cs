@@ -112,6 +112,37 @@ namespace JdUtils
         }
 
         /// <summary>
+        /// Invokes action on UI thread
+        /// </summary>
+        /// <param name="action"></param>
+        /// <param name="parameter"></param>
+        public void PostToUi<T>(Action<T> action, T parameter)
+        {
+            void Wrapper()
+            {
+                action?.Invoke(parameter);
+            }
+
+            PostToUi(Wrapper);
+        }
+
+        /// <summary>
+        /// Invokes action on UI thread
+        /// </summary>
+        /// <param name="action"></param>
+        public void PostToUi(Action action)
+        {
+            if (m_uiDispatcher.CheckAccess())
+            {
+                action?.Invoke();
+            }
+            else
+            {
+                m_uiDispatcher.Invoke(action);
+            }
+        }
+
+        /// <summary>
         /// Creates wrapping action to handle <paramref name="worker"/> on background thread and
         /// then synchronize <paramref name="success"/> on UI thread
         /// </summary>
@@ -126,10 +157,7 @@ namespace JdUtils
             return () =>
             {
                 var result = worker.Invoke(param);
-                PostToUi(() =>
-                {
-                    success?.Invoke(result);
-                });
+                PostToUi(success, result);
             };
         }
 
@@ -146,10 +174,7 @@ namespace JdUtils
             return () =>
             {
                 var result = worker.Invoke();
-                PostToUi(() =>
-                {
-                    success?.Invoke(result);
-                });
+                PostToUi(success, result);
             };
         }
 
@@ -167,10 +192,7 @@ namespace JdUtils
             return () =>
             {
                 worker.Invoke(param);
-                PostToUi(() =>
-                {
-                    success?.Invoke();
-                });
+                PostToUi(success);
             };
         }
 
@@ -236,32 +258,13 @@ namespace JdUtils
         private void OnException(Exception exception, ExceptionHandler failure)
         {
             LogError?.Invoke(exception);
-            PostToUi(() =>
+            if (failure != null)
             {
-                if (failure == null)
-                {
-                    UnhandledError?.Invoke(exception);
-                }
-                else
-                {
-                    failure.Invoke(exception);
-                }
-            });
-        }
-
-        /// <summary>
-        /// Invokes action on UI thread
-        /// </summary>
-        /// <param name="action"></param>
-        private void PostToUi(Action action)
-        {
-            if (m_uiDispatcher.CheckAccess())
-            {
-                action?.Invoke();
+                PostToUi(failure.Invoke, exception);
             }
-            else
+            else if (UnhandledError != null)
             {
-                m_uiDispatcher.Invoke(action);
+                PostToUi(UnhandledError.Invoke, exception);
             }
         }
     }
