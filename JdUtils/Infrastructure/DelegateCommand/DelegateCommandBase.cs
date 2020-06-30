@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq.Expressions;
-using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using resx = JdUtils.Resources.Resources;
 
@@ -13,22 +13,59 @@ namespace JdUtils.Infrastructure
     /// </summary>
     public abstract class DelegateCommandBase : ICommand
     {
-        private readonly SynchronizationContext m_syncContext;
         private readonly HashSet<string> m_observedPropertiesExpressions = new HashSet<string>();
+        private List<WeakReference> m_canExecuteChangedHandlers;
+
+        protected readonly Func<object, Task> m_executeMethod;
+        protected readonly Func<object, bool> m_canExecuteMethod;
 
         /// <summary>
         /// Vytvoří novou instanci <see cref="DelegateCommandBase"/>, specifikující jak metodu při vykonání commandu, tak funkci,
-        /// zda lze command vykonat
+        /// zda lze command vykonat.
         /// </summary>
-        protected DelegateCommandBase()
+        /// <param name="executeMethod"><see cref="Action"/>, která se vykoná, když je <see cref="ICommand.Execute"/> vyvoláno.</param>
+        /// <param name="canExecuteMethod"><see cref="Func{Object,Bool}"/>, která se vykoná, když je <see cref="ICommand.CanExecute"/> vyvoláno.</param>
+        protected DelegateCommandBase(Action<object> executeMethod, Func<object, bool> canExecuteMethod)
         {
-            m_syncContext = SynchronizationContext.Current;
+            if (executeMethod == null || canExecuteMethod == null)
+            {
+                throw new ArgumentNullException(nameof(executeMethod), resx.DelegateCommandDelegatesCannotBeNull);
+            }
+
+            m_executeMethod = (arg) => { executeMethod(arg); return Task.CompletedTask; };
+            m_canExecuteMethod = canExecuteMethod;
+        }
+
+        /// <summary>
+        /// Creates a new instance of a <see cref="DelegateCommandBase"/>, specifying both the Execute action as an awaitable Task and the CanExecute function.
+        /// </summary>
+        /// <param name="executeMethod">The <see cref="Func{Object,Task}"/> to execute when <see cref="ICommand.Execute"/> is invoked.</param>
+        /// <param name="canExecuteMethod">The <see cref="Func{Object,Bool}"/> to invoked when <see cref="ICommand.CanExecute"/> is invoked.</param>
+        protected DelegateCommandBase(Func<object, Task> executeMethod, Func<object, bool> canExecuteMethod)
+        {
+            if (executeMethod == null || canExecuteMethod == null)
+            {
+                throw new ArgumentNullException(nameof(executeMethod), resx.DelegateCommandDelegatesCannotBeNull);
+            }
+
+            m_executeMethod = executeMethod;
+            m_canExecuteMethod = canExecuteMethod;
         }
 
         /// <summary>
         /// Vyvoláno když se objeví změna, která ovlivní zda se má command vykonat.
         /// </summary>
-        public virtual event EventHandler CanExecuteChanged;
+        public virtual event EventHandler CanExecuteChanged
+        {
+            add
+            {
+                WeakEventHandlerManager.AddWeakReferenceHandler(ref m_canExecuteChangedHandlers, value, 2);
+            }
+            remove
+            {
+                WeakEventHandlerManager.RemoveWeakReferenceHandler(m_canExecuteChangedHandlers, value);
+            }
+        }
 
         /// <summary>
         /// Vyvolá <see cref="ICommand.CanExecuteChanged"/>, takže každý
@@ -36,24 +73,17 @@ namespace JdUtils.Infrastructure
         /// </summary>
         protected virtual void OnCanExecuteChanged()
         {
-            if (m_syncContext != null && m_syncContext != SynchronizationContext.Current)
-            {
-                m_syncContext.Post(InvokeCanExecuteChanged, null);
-            }
-            else
-            {
-                InvokeCanExecuteChanged();
-            }
+            WeakEventHandlerManager.CallWeakReferenceHandlers(this, m_canExecuteChangedHandlers);
         }
 
-        /// <summary>
-        /// Vyvolá <see cref="CanExecuteChanged"/>
-        /// </summary>
-        /// <param name="obj">Nepoužitý parametr. Slouží pouze pro signature <see cref="SynchronizationContext.Post"/></param>
-        private void InvokeCanExecuteChanged(object obj = null)
-        {
-            CanExecuteChanged?.Invoke(this, EventArgs.Empty);
-        }
+        ///// <summary>
+        ///// Vyvolá <see cref="CanExecuteChanged"/>
+        ///// </summary>
+        ///// <param name="obj">Nepoužitý parametr. Slouží pouze pro signature <see cref="SynchronizationContext.Post"/></param>
+        //private void InvokeCanExecuteChanged(object obj = null)
+        //{
+        //    CanExecuteChanged?.Invoke(this, EventArgs.Empty);
+        //}
 
         /// <summary>
         /// Vyvolá <see cref="CanExecuteChanged"/>, takže každy, kdo
@@ -69,9 +99,9 @@ namespace JdUtils.Infrastructure
 
         /// <summary>Defines the method to be called when the command is invoked.</summary>
         /// <param name="parameter">Data used by the command.  If the command does not require data to be passed, this object can be set to null.</param>
-        void ICommand.Execute(object parameter)
+        async void ICommand.Execute(object parameter)
         {
-            Execute(parameter);
+            await Execute(parameter);
         }
 
         /// <summary>Defines the method that determines whether the command can execute in its current state.</summary>
@@ -86,14 +116,20 @@ namespace JdUtils.Infrastructure
         /// Ošetření vnitřního vyvolání <see cref="ICommand.Execute(object)"/>
         /// </summary>
         /// <param name="parameter">Command Parametr</param>
-        protected abstract void Execute(object parameter);
+        protected async Task Execute(object parameter)
+        {
+            await m_executeMethod(parameter);
+        }
 
         /// <summary>
         /// Ošetření vnitřního vyvolání <see cref="ICommand.CanExecute(object)"/>
         /// </summary>
         /// <param name="parameter">Command Parametr</param>
         /// <returns><see langword="true"/> pokud Command může být spuštěn, jinak <see langword="false" /></returns>
-        protected abstract bool CanExecute(object parameter);
+        protected bool CanExecute(object parameter)
+        {
+            return m_canExecuteMethod?.Invoke(parameter) == true;
+        }
 
         /// <summary>
         /// Hlídá vlastnost, která implementuje INotifyPropertyChanged, a automaticky vyvolává <see cref="DelegateCommandBase.RaiseCanExecuteChanged"/> při změnách této vlastnosti.
