@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq.Expressions;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using resx = JdUtils.Resources.Resources;
 
@@ -31,9 +32,6 @@ namespace JdUtils.Infrastructure
     /// </remarks>
     public class DelegateCommand<T> : DelegateCommandBase
     {
-        private readonly Action<T> m_executeMethod;
-        private Func<T, bool> m_canExecuteMethod;
-
         /// <summary>
         /// Vytvoří novou instanci <see cref="DelegateCommand{T}"/> s <see cref="Action{T}"/>, která bude zavolána při vykonávání.
         /// </summary>
@@ -55,28 +53,70 @@ namespace JdUtils.Infrastructure
         /// <exception cref="ArgumentNullException">Pokud oba parametry <paramref name="executeMethod"/>
         /// a <paramref name="canExecuteMethod"/> jsou <see langword="null" />.</exception>
         public DelegateCommand(Action<T> executeMethod, Func<T, bool> canExecuteMethod)
+            : base(o => executeMethod((T)o), o => canExecuteMethod((T)o))
         {
-            if (executeMethod == null && canExecuteMethod == null)
-            {
-                throw new ArgumentNullException(nameof(executeMethod), resx.DelegateCommandDelegatesCannotBeNull);
-            }
+            CheckIsAssigned(executeMethod, canExecuteMethod);
 
             if (!IsObjectOrNullable(typeof(T)))
             {
                 throw new InvalidCastException(resx.DelegateCommandInvalidGenericPayloadType);
             }
+        }
 
-            m_executeMethod = executeMethod;
-            m_canExecuteMethod = canExecuteMethod;
+        /// <summary>
+        /// Vytvoří novou instanci <see cref="DelegateCommand{T}"/> s <see cref="Func{TResult}"/>, která bude zavolána při vykonávání.
+        /// </summary>
+        /// <param name="executeMethod"><see cref="Func{TResult}"/>,která bude vyvolána, když bude zavoláno <see cref="Execute(T)"/>.
+        /// <see cref="Action{T}"/> může být <see langword="null"/>, pokud se chce napojit pouze <see cref="CanExecute(T)"/>.</param>
+        /// <remarks><see cref="CanExecute(T)"/> vždy vrátí <see langword="true"/>.</remarks>
+        private DelegateCommand(Func<T, Task> executeMethod)
+            : this(executeMethod, (o) => true)
+        {
+        }
+
+        /// <summary>
+        /// Inicializuje novou instanci <see cref="DelegateCommand{T}"/>.
+        /// </summary>
+        /// <param name="executeMethod"><see cref="Action{T}"/>,která bude vyvolána, když bude zavoláno <see cref="Execute(T)"/>.
+        /// <see cref="Action{T}"/> může být <see langword="null"/>, pokud se chce napojit pouze <see cref="CanExecute(T)"/>.</param>
+        /// <param name="canExecuteMethod"><see cref="Func{TBool, TResult}"/>, která bude vyvolána, když bude zavoláno <see cref="CanExecute(T)"/>.
+        /// <see cref="Func{TBool, TResult}"/> může být <see langword="null"/>.</param>
+        /// <exception cref="ArgumentNullException">Pokud oba parametry <paramref name="executeMethod"/>
+        /// a <paramref name="canExecuteMethod"/> jsou <see langword="null" />.</exception>
+        private DelegateCommand(Func<T, Task> executeMethod, Func<T, bool> canExecuteMethod)
+            : base((o) => executeMethod((T)o), (o) => canExecuteMethod((T)o))
+        {
+            CheckIsAssigned(executeMethod, canExecuteMethod);
+        }
+
+        /// <summary>
+        /// Factory method to create a new instance of <see cref="DelegateCommand{T}"/> from an awaitable handler method.
+        /// </summary>
+        /// <param name="executeMethod">Delegate to execute when Execute is called on the command.</param>
+        /// <returns>Constructed instance of <see cref="DelegateCommand{T}"/></returns>
+        public static DelegateCommand<T> FromAsyncHandler(Func<T, Task> executeMethod)
+        {
+            return new DelegateCommand<T>(executeMethod);
+        }
+
+        /// <summary>
+        /// Factory method to create a new instance of <see cref="DelegateCommand{T}"/> from an awaitable handler method.
+        /// </summary>
+        /// <param name="executeMethod">Delegate to execute when Execute is called on the command. This can be null to just hook up a CanExecute delegate.</param>
+        /// <param name="canExecuteMethod">Delegate to execute when CanExecute is called on the command. This can be null.</param>
+        /// <returns>Constructed instance of <see cref="DelegateCommand{T}"/></returns>
+        public static DelegateCommand<T> FromAsyncHandler(Func<T, Task> executeMethod, Func<T, bool> canExecuteMethod)
+        {
+            return new DelegateCommand<T>(executeMethod, canExecuteMethod);
         }
 
         ///<summary>
         ///Spouští command a vyvolává <see cref="Action{T}"/> dodanou v konstuktoru.
         ///</summary>
         ///<param name="parameter">Data používaná commandem.</param>
-        public void Execute(T parameter)
+        public virtual async Task Execute(T parameter)
         {
-            m_executeMethod(parameter);
+            await base.Execute(parameter);
         }
 
         ///<summary>
@@ -86,9 +126,9 @@ namespace JdUtils.Infrastructure
         ///<returns>
         ///<see langword="true" /> pokud command může být vyvolán; jinak, <see langword="false" />.
         ///</returns>
-        public bool CanExecute(T parameter)
+        public virtual bool CanExecute(T parameter)
         {
-            return m_canExecuteMethod(parameter);
+            return base.CanExecute(parameter);
         }
 
         /// <summary>
@@ -101,39 +141,6 @@ namespace JdUtils.Infrastructure
         {
             ObservesPropertyInternal(propertyExpression);
             return this;
-        }
-
-        /// <summary>
-        /// Hlídá vlastnost, která je použitá k určení, zda se command má vykonat a pokud implementuje INotifyPropertyChanged, tak
-        /// automaticky vyvolává <see cref="DelegateCommandBase.RaiseCanExecuteChanged"/> při změnách této vlastnosti.
-        /// </summary>
-        /// <param name="canExecuteExpression">Výraz vlastnosti. Příklad: ObservesCanExecute(() => PropertyName).</param>
-        /// <returns>Stávající instance <see cref="DelegateCommand{T}"/></returns>
-        public DelegateCommand<T> ObservesCanExecute(Expression<Func<bool>> canExecuteExpression)
-        {
-            var expression = Expression.Lambda<Func<T, bool>>(canExecuteExpression.Body, Expression.Parameter(typeof(T), "o"));
-            m_canExecuteMethod = expression.Compile();
-            ObservesPropertyInternal(canExecuteExpression);
-            return this;
-        }
-
-        /// <summary>
-        /// Ošetření vnitřního vyvolání <see cref="ICommand.Execute(object)"/>
-        /// </summary>
-        /// <param name="parameter">Command Parametr</param>
-        protected override void Execute(object parameter)
-        {
-            Execute((T)parameter);
-        }
-
-        /// <summary>
-        /// Ošetření vnitřního vyvolání <see cref="ICommand.CanExecute(object)"/>
-        /// </summary>
-        /// <param name="parameter">Command Parametr</param>
-        /// <returns><see langword="true"/> pokud Command může být spuštěn, jinak <see langword="false" /></returns>
-        protected override bool CanExecute(object parameter)
-        {
-            return CanExecute((T)parameter);
         }
 
         /// <summary>
