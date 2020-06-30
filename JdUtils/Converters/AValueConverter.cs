@@ -10,5 +10,10 @@ namespace JdUtils.Converters
     {
         public abstract object Convert(object value, Type targetType, object parameter, CultureInfo culture);
         public abstract object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture);
+
+        public override object ProvideValue(IServiceProvider serviceProvider)
+        {
+            return this;
+        }
     }
 }
