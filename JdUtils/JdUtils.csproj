@@ -11,15 +11,21 @@
     <PackageProjectUrl>https://github.com/duchacekjan/JdUtils</PackageProjectUrl>
     <RepositoryUrl>https://github.com/duchacekjan/JdUtils.git</RepositoryUrl>
     <PackageTags />
-    <PackageReleaseNotes>Added bindable base</PackageReleaseNotes>
-    <AssemblyVersion>1.0.2.0</AssemblyVersion>
-    <FileVersion>1.0.2.0</FileVersion>
+    <PackageReleaseNotes>Přidány convertery. Přidány xmlns definice pro lepší referencování v xamlu</PackageReleaseNotes>
+    <AssemblyVersion>1.0.3.0</AssemblyVersion>
+    <FileVersion>1.0.3.0</FileVersion>
     <RepositoryType>git</RepositoryType>
     <PackageIcon>jdUtilsIcon.png</PackageIcon>
     <PackageIconUrl />
-    <Version>1.0.2</Version>
+    <Version>1.0.3</Version>
     <UseWPF>true</UseWPF>
   </PropertyGroup>
+  <ItemGroup>
+    <AssemblyAttribute Include="System.Windows.Markup.XmlnsDefinition">
+      <_Parameter1>"jgs:converters"</_Parameter1>
+      <_Parameter2>"JdUtils.Converters"</_Parameter2>
+    </AssemblyAttribute>
+  </ItemGroup>
   <ItemGroup>
     <None Include="jdUtilsIcon.png">
       <Pack>True</Pack>
