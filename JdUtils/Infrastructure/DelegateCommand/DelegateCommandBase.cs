@@ -27,10 +27,7 @@ namespace JdUtils.Infrastructure
         /// <param name="canExecuteMethod"><see cref="Func{Object,Bool}"/>, která se vykoná, když je <see cref="ICommand.CanExecute"/> vyvoláno.</param>
         protected DelegateCommandBase(Action<object> executeMethod, Func<object, bool> canExecuteMethod)
         {
-            if (executeMethod == null || canExecuteMethod == null)
-            {
-                throw new ArgumentNullException(nameof(executeMethod), resx.DelegateCommandDelegatesCannotBeNull);
-            }
+            CheckIsAssigned(executeMethod, canExecuteMethod);
 
             m_executeMethod = (arg) => { executeMethod(arg); return Task.CompletedTask; };
             m_canExecuteMethod = canExecuteMethod;
@@ -43,10 +40,7 @@ namespace JdUtils.Infrastructure
         /// <param name="canExecuteMethod">The <see cref="Func{Object,Bool}"/> to invoked when <see cref="ICommand.CanExecute"/> is invoked.</param>
         protected DelegateCommandBase(Func<object, Task> executeMethod, Func<object, bool> canExecuteMethod)
         {
-            if (executeMethod == null || canExecuteMethod == null)
-            {
-                throw new ArgumentNullException(nameof(executeMethod), resx.DelegateCommandDelegatesCannotBeNull);
-            }
+            CheckIsAssigned(executeMethod, canExecuteMethod);
 
             m_executeMethod = executeMethod;
             m_canExecuteMethod = canExecuteMethod;
@@ -75,15 +69,6 @@ namespace JdUtils.Infrastructure
         {
             WeakEventHandlerManager.CallWeakReferenceHandlers(this, m_canExecuteChangedHandlers);
         }
-
-        ///// <summary>
-        ///// Vyvolá <see cref="CanExecuteChanged"/>
-        ///// </summary>
-        ///// <param name="obj">Nepoužitý parametr. Slouží pouze pro signature <see cref="SynchronizationContext.Post"/></param>
-        //private void InvokeCanExecuteChanged(object obj = null)
-        //{
-        //    CanExecuteChanged?.Invoke(this, EventArgs.Empty);
-        //}
 
         /// <summary>
         /// Vyvolá <see cref="CanExecuteChanged"/>, takže každy, kdo
@@ -147,6 +132,57 @@ namespace JdUtils.Infrastructure
             else
             {
                 throw new ArgumentException(string.Format(resx.DelegateCommandPropertyIsBeeingObserved, propertyExpression), nameof(propertyExpression));
+            }
+        }
+
+        protected internal void CheckIsAssigned<T>(Action<T> executeMethod, Func<T, bool> canExecuteMethod)
+        {
+            if (executeMethod == null)
+            {
+                throw new ArgumentNullException(nameof(executeMethod), resx.DelegateCommandDelegatesCannotBeNull);
+            }
+
+            if (canExecuteMethod == null)
+            {
+                throw new ArgumentNullException(nameof(canExecuteMethod), resx.DelegateCommandDelegatesCannotBeNull);
+            }
+        }
+
+        protected internal void CheckIsAssigned<T>(Func<T, Task> executeMethod, Func<T, bool> canExecuteMethod)
+        {
+            if (executeMethod == null)
+            {
+                throw new ArgumentNullException(nameof(executeMethod), resx.DelegateCommandDelegatesCannotBeNull);
+            }
+
+            if (canExecuteMethod == null)
+            {
+                throw new ArgumentNullException(nameof(canExecuteMethod), resx.DelegateCommandDelegatesCannotBeNull);
+            }
+        }
+
+        protected internal void CheckIsAssigned(Action executeMethod, Func<bool> canExecuteMethod)
+        {
+            if (executeMethod == null)
+            {
+                throw new ArgumentNullException(nameof(executeMethod), resx.DelegateCommandDelegatesCannotBeNull);
+            }
+
+            if (canExecuteMethod == null)
+            {
+                throw new ArgumentNullException(nameof(canExecuteMethod), resx.DelegateCommandDelegatesCannotBeNull);
+            }
+        }
+        protected internal void CheckIsAssigned(Func<Task> executeMethod, Func<bool> canExecuteMethod)
+        {
+            if (executeMethod == null)
+            {
+                throw new ArgumentNullException(nameof(executeMethod), resx.DelegateCommandDelegatesCannotBeNull);
+            }
+
+            if (canExecuteMethod == null)
+            {
+                throw new ArgumentNullException(nameof(canExecuteMethod), resx.DelegateCommandDelegatesCannotBeNull);
             }
         }
     }
