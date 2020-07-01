@@ -21,14 +21,14 @@ namespace JdUtils.Extensions
             var part = source?.Template.FindName(partName, source);
             return part as T;
         }
-        
+
         /// <summary>
-         /// Finds part of Control with given name and given type
-         /// </summary>
-         /// <typeparam name="T">Type of searched part</typeparam>
-         /// <param name="source">Control in which should be searched part</param>
-         /// <param name="partName">PartName</param>
-         /// <returns></returns>
+        /// Finds part of Control with given name and given type
+        /// </summary>
+        /// <typeparam name="T">Type of searched part</typeparam>
+        /// <param name="source">Control in which should be searched part</param>
+        /// <param name="partName">PartName</param>
+        /// <returns></returns>
         public static T FindName<T>(this Control source, string partName)
             where T : DependencyObject
         {
@@ -56,6 +56,39 @@ namespace JdUtils.Extensions
                     propertyInfo.SetValue(source, value);
                 }
             }
+        }
+
+        /// <summary>
+        /// Invokes <paramref name="action"/> when <paramref name="source"/> is not null
+        /// </summary>
+        /// <typeparam name="T">Source type</typeparam>
+        /// <param name="source">Object for check is is not <see langword="null"/></param>
+        /// <param name="action">Action to be invoked</param>
+        /// <remarks>For fluent api use <see cref="AndIfNotNull{T}(T, Action{T})"/></remarks>
+        public static void IfNotNull<T>(this T source, Action<T> action)
+        {
+            if (source != null)
+            {
+                action?.Invoke(source);
+            }
+        }
+
+        /// <summary>
+        /// Invokes <paramref name="action"/> when <paramref name="source"/> is not null.
+        /// </summary>
+        /// <typeparam name="T">Source type</typeparam>
+        /// <param name="source">Object for check is is not <see langword="null"/></param>
+        /// <param name="action">Action to be invoked</param>
+        /// <remarks>For fluent api</remarks>
+        /// <returns>Returns <paramref name="source"/></returns>
+        public static T AndIfNotNull<T>(this T source, Action<T> action)
+        {
+            if (source != null)
+            {
+                action?.Invoke(source);
+            }
+
+            return source;
         }
 
         /// <summary>
