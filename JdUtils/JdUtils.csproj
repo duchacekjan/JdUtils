@@ -11,13 +11,13 @@
     <PackageProjectUrl>https://github.com/duchacekjan/JdUtils</PackageProjectUrl>
     <RepositoryUrl>https://github.com/duchacekjan/JdUtils.git</RepositoryUrl>
     <PackageTags />
-    <PackageReleaseNotes>Added two extensions IfNotNull and AndIfNotNull</PackageReleaseNotes>
-    <AssemblyVersion>1.0.4.1</AssemblyVersion>
-    <FileVersion>1.0.4.1</FileVersion>
+    <PackageReleaseNotes>Added extension ExecuteCmd</PackageReleaseNotes>
+    <AssemblyVersion>1.0.4.2</AssemblyVersion>
+    <FileVersion>1.0.4.2</FileVersion>
     <RepositoryType>git</RepositoryType>
     <PackageIcon>jdUtilsIcon.png</PackageIcon>
     <PackageIconUrl />
-    <Version>1.0.4.1</Version>
+    <Version>1.0.4.2</Version>
     <UseWPF>true</UseWPF>
   </PropertyGroup>
   <ItemGroup>

@@ -3,6 +3,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 
 namespace JdUtils.Extensions
 {
@@ -89,6 +90,31 @@ namespace JdUtils.Extensions
             }
 
             return source;
+        }
+
+        /// <summary>
+        /// Calls <see cref="ICommand.CanExecute(object)"/> and if it returns <see langword="true"/>
+        /// then calls <see cref="ICommand.Execute(object)"/>
+        /// </summary>
+        /// <typeparam name="T">Parameter type</typeparam>
+        /// <param name="command">Command</param>
+        /// <param name="parameter">Parameter</param>
+        public static void ExecuteCmd<T>(this ICommand command, T parameter)
+        {
+            if (command?.CanExecute(parameter) == true)
+            {
+                command.Execute(parameter);
+            }
+        }
+        /// <summary>
+        /// Calls <see cref="ICommand.CanExecute(null)"/> and if it returns <see langword="true"/>
+        /// then calls <see cref="ICommand.Execute(null)"/>
+        /// </summary>
+        /// <param name="command">Command</param>
+        /// <param name="parameter">Parameter</param>
+        public static void ExecuteCmd(this ICommand command)
+        {
+            command.ExecuteCmd<object>(null);
         }
 
         /// <summary>
