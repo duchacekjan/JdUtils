@@ -1,28 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using JdUtils.Extensions;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace JgsUtils.Demo
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow
     {
+        private Button m_btn;
         public MainWindow()
         {
             InitializeComponent();
+            Loaded += AfterLoaded;
+        }
+
+        private void AfterLoaded(object sender, RoutedEventArgs e)
+        {
+            m_btn = FindName("PART_Test") as Button;
+            m_btn.SetValueSafe(s => s.Content, "POKUS");
         }
     }
 }
