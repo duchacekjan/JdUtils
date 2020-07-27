@@ -11,5 +11,8 @@
         <Button Visibility="{Binding Converter={cnv:BoolToVisibilityConverter}}"
                 IsEnabled="{Binding Converter={cnv:NotConverter}}"/>
         <Button x:Name="PART_Test"/>
+        <ComboBox ItemsSource="{Binding Source={x:Type local:E1}, Converter={cnv:EnumToListConverter}}"
+                  DisplayMemberPath="Value"
+                  SelectedValuePath="Key"/>
     </StackPanel>
 </Window>
