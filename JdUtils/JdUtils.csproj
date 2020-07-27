@@ -11,11 +11,11 @@
     <PackageProjectUrl>https://github.com/duchacekjan/JdUtils</PackageProjectUrl>
     <RepositoryUrl>https://github.com/duchacekjan/JdUtils.git</RepositoryUrl>
     <PackageTags />
-    <PackageReleaseNotes>Enum converter, String null or empty converter</PackageReleaseNotes>
+    <PackageReleaseNotes>Enum to list converter</PackageReleaseNotes>
     <RepositoryType>git</RepositoryType>
     <PackageIcon>jdUtilsIcon.png</PackageIcon>
     <PackageIconUrl />
-    <Version>1.0.4.5</Version>
+    <Version>1.0.4.6</Version>
     <UseWPF>true</UseWPF>
   </PropertyGroup>
   <ItemGroup>
