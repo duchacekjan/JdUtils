@@ -6,12 +6,16 @@
         xmlns:local="clr-namespace:JgsUtils.Demo"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800"
-        xmlns:cnv="jgs:converters">
+        xmlns:cnv="jgs:converters"
+        xmlns:m="jgs:markup">
     <StackPanel>
         <Button Visibility="{Binding Converter={cnv:BoolToVisibilityConverter}}"
                 IsEnabled="{Binding Converter={cnv:NotConverter}}"/>
         <Button x:Name="PART_Test"/>
-        <ComboBox ItemsSource="{Binding Source={x:Type local:E1}, Converter={cnv:EnumToListConverter}}"
+        <!--<ComboBox ItemsSource="{Binding Source={x:Type local:E1}, Converter={cnv:EnumToListConverter}}"
+                  DisplayMemberPath="Value"
+                  SelectedValuePath="Key"/>-->
+        <ComboBox ItemsSource="{m:EnumValues EnumType={x:Type local:E1}}"
                   DisplayMemberPath="Value"
                   SelectedValuePath="Key"/>
     </StackPanel>
