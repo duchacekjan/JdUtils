@@ -5,6 +5,8 @@ using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
 
 namespace JdUtils.Extensions
 {
@@ -152,6 +154,25 @@ namespace JdUtils.Extensions
         public static void ExecuteCmd(this ICommand command)
         {
             command.ExecuteCmd<object>(null);
+        }
+
+        internal static ImageSource ToImageSource(this string urlImage)
+        {
+            ImageSource result = null;
+            if (!string.IsNullOrEmpty(urlImage))
+            {
+                var bitmap = new BitmapImage();
+                try
+                {
+                    bitmap.BeginInit();
+                    bitmap.UriSource = new Uri(urlImage, UriKind.Absolute);
+                    bitmap.EndInit();
+                    result = bitmap;
+                }
+                catch { }
+            }
+
+            return result;
         }
 
         /// <summary>

@@ -1,7 +1,7 @@
-﻿using System;
+﻿using JdUtils.Extensions;
+using System;
 using System.Windows.Markup;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
 
 namespace JdUtils.MarkupExtensions
 {
@@ -12,21 +12,7 @@ namespace JdUtils.MarkupExtensions
 
         public override object ProvideValue(IServiceProvider serviceProvider)
         {
-            ImageSource result = null;
-            if (!string.IsNullOrEmpty(ImageLink))
-            {
-                var bitmap = new BitmapImage();
-                try
-                {
-                    bitmap.BeginInit();
-                    bitmap.UriSource = new Uri(ImageLink, UriKind.Absolute);
-                    bitmap.EndInit();
-                    result = bitmap;
-                }
-                catch {}
-            }
-
-            return result;
+            return ImageLink?.ToImageSource();
         }
     }
 }
