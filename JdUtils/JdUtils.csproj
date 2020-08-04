@@ -11,11 +11,11 @@
     <PackageProjectUrl>https://github.com/duchacekjan/JdUtils</PackageProjectUrl>
     <RepositoryUrl>https://github.com/duchacekjan/JdUtils.git</RepositoryUrl>
     <PackageTags />
-    <PackageReleaseNotes>UrlImage markup extension and converter</PackageReleaseNotes>
+    <PackageReleaseNotes>EnumValues converter</PackageReleaseNotes>
     <RepositoryType>git</RepositoryType>
     <PackageIcon>jdUtilsIcon.png</PackageIcon>
     <PackageIconUrl />
-    <Version>1.0.6</Version>
+    <Version>1.0.7</Version>
     <UseWPF>true</UseWPF>
   </PropertyGroup>
   <ItemGroup>
