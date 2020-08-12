@@ -11,7 +11,7 @@
     <PackageProjectUrl>https://github.com/duchacekjan/JdUtils</PackageProjectUrl>
     <RepositoryUrl>https://github.com/duchacekjan/JdUtils.git</RepositoryUrl>
     <PackageTags />
-    <PackageReleaseNotes>Extended converters and markups for constructor s definiton of default value. Created base converter for converters with negate property</PackageReleaseNotes>
+    <PackageReleaseNotes>Extended converters and markups for constructor s definiton of default value. Created base converter for converters with negate property. Breaking changes: StringNullOrEmptyConverter property Inverse renamed to Negate</PackageReleaseNotes>
     <RepositoryType>git</RepositoryType>
     <PackageIcon>jdUtilsIcon.png</PackageIcon>
     <PackageIconUrl />
