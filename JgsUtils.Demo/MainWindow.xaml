@@ -7,10 +7,13 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800"
         xmlns:cnv="jgs:converters"
+        x:Name="WindowElement"
         xmlns:m="jgs:markup">
     <StackPanel>
         <Button Visibility="{Binding Converter={cnv:BoolToVisibilityConverter}}"
-                IsEnabled="{Binding Converter={cnv:NotConverter}}"/>
+                IsEnabled="{Binding Converter={cnv:NotConverter}}"
+                Content="Neco"
+                Width="{Binding ElementName=WindowElement, Path=ActualWidth, Converter={cnv:RatioConverter 0.3}}"/>
         <Button x:Name="PART_Test"/>
         <!--<ComboBox ItemsSource="{Binding Source={x:Type local:E1}, Converter={cnv:EnumToListConverter}}"
                   DisplayMemberPath="Value"
@@ -20,7 +23,7 @@
                   SelectedValuePath="Key"/>
         <Image Width="100"
                Height="100"
-               Source="{m:UrlImage ImageLink='http://www.americanlayout.com/wp/wp-content/uploads/2012/08/C-To-Go-300x300.png'}"
+               Source="{m:UrlImage 'http://www.americanlayout.com/wp/wp-content/uploads/2012/08/C-To-Go-300x300.png'}"
                Stretch="Uniform"/>
     </StackPanel>
 </Window>

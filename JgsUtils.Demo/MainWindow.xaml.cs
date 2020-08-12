@@ -10,9 +10,8 @@ namespace JgsUtils.Demo
     /// </summary>
     public partial class MainWindow
     {
-
-
         private Button m_btn;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -20,6 +19,7 @@ namespace JgsUtils.Demo
             var t1 = E1.Collapsed;
             var cnv = new cnv.EnumConverter();
             var t2 = cnv.Convert(t1, typeof(Visibility), null, null);
+            DataContext = true;
         }
 
         private void AfterLoaded(object sender, RoutedEventArgs e)
