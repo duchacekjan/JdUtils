@@ -10,6 +10,16 @@ namespace JdUtils.MarkupExtensions
     [MarkupExtensionReturnType(typeof(IEnumerable<KeyValuePair<object, string>>))]
     public class EnumValues : MarkupExtension
     {
+        public EnumValues()
+            : this(null)
+        {
+        }
+
+        public EnumValues(Type enumType)
+        {
+            EnumType = enumType;
+        }
+
         public Type EnumType { get; set; }
 
         public override object ProvideValue(IServiceProvider serviceProvider)

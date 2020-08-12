@@ -4,14 +4,12 @@ using System.Windows;
 
 namespace JdUtils.Converters
 {
-    public class StringNullOrEmptyConverter : AValueConverter
+    public class StringNullOrEmptyConverter : AValueWithNegateConverter
     {
-        public bool Inverse { get; set; }
-
         public override object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             var result = string.IsNullOrEmpty(value?.ToString());
-            if (Inverse)
+            if (Negate)
             {
                 result = !result;
             }

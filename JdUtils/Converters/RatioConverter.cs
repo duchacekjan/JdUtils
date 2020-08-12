@@ -6,6 +6,16 @@ namespace JdUtils.Converters
 {
     public class RatioConverter : AValueConverter
     {
+        public RatioConverter()
+            : this(1)
+        {
+        }
+
+        public RatioConverter(double ratio)
+        {
+            Ratio = ratio;
+        }
+
         public double Ratio { get; set; } = 1;
 
         public double MinValue { get; set; } = double.NegativeInfinity;

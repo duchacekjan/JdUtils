@@ -4,10 +4,8 @@ using System.Windows;
 
 namespace JdUtils.Converters
 {
-    public class BoolToVisibilityConverter : AValueConverter
+    public class BoolToVisibilityConverter : AValueWithNegateConverter
     {
-        public bool Negate { get; set; }
-
         public override object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             var result = Visibility.Collapsed;
