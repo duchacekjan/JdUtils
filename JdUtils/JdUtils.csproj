@@ -11,11 +11,11 @@
     <PackageProjectUrl>https://github.com/duchacekjan/JdUtils</PackageProjectUrl>
     <RepositoryUrl>https://github.com/duchacekjan/JdUtils.git</RepositoryUrl>
     <PackageTags />
-    <PackageReleaseNotes>Extended converters and markups for constructor s definiton of default value. Created base converter for converters with negate property. Breaking changes: StringNullOrEmptyConverter property Inverse renamed to Negate</PackageReleaseNotes>
+    <PackageReleaseNotes>Enum values markup extended for resource manager for translation enum values. Resource key has pattern: EnumTypeName_EnumTypeValue</PackageReleaseNotes>
     <RepositoryType>git</RepositoryType>
     <PackageIcon>jdUtilsIcon.png</PackageIcon>
     <PackageIconUrl />
-    <Version>1.0.9</Version>
+    <Version>1.0.9.1</Version>
     <UseWPF>true</UseWPF>
   </PropertyGroup>
   <ItemGroup>

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Resources;
 using System.Windows.Markup;
 using JdUtils.Extensions;
 
@@ -19,6 +20,8 @@ namespace JdUtils.MarkupExtensions
         {
             EnumType = enumType;
         }
+
+        public ResourceManager Resources { get; set; }
 
         public Type EnumType { get; set; }
 
@@ -38,10 +41,19 @@ namespace JdUtils.MarkupExtensions
         private KeyValuePair<object, string> GetDescription(object enumValue, Type enumType)
         {
             var value = enumValue.ToString();
-            var attribute = value.GetEnumAttribute<DescriptionAttribute>(enumType);
+            string description;
+            if (Resources != null)
+            {
+                description = Resources.GetString($"{EnumType.Name}_{value}");
+            }
+            else
+            {
+                var attribute = value.GetEnumAttribute<DescriptionAttribute>(enumType);
 
-            var description = attribute?.Description ?? value;
-            return new KeyValuePair<object, string>(enumValue, description);
+                description = attribute?.Description;
+            }
+
+            return new KeyValuePair<object, string>(enumValue, description ?? value);
         }
     }
 }
