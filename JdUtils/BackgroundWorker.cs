@@ -132,13 +132,20 @@ namespace JdUtils
         /// <param name="action"></param>
         public void PostToUi(Action action)
         {
-            if (m_uiDispatcher.CheckAccess())
+            try
             {
-                action?.Invoke();
+                if (m_uiDispatcher.CheckAccess())
+                {
+                    action?.Invoke();
+                }
+                else
+                {
+                    m_uiDispatcher.Invoke(action);
+                }
             }
-            else
+            catch(OperationCanceledException)
             {
-                m_uiDispatcher.Invoke(action);
+                ;//INFO Silent handling task cancellation
             }
         }
 

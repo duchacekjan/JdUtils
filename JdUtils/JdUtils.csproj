@@ -11,11 +11,11 @@
     <PackageProjectUrl>https://github.com/duchacekjan/JdUtils</PackageProjectUrl>
     <RepositoryUrl>https://github.com/duchacekjan/JdUtils.git</RepositoryUrl>
     <PackageTags />
-    <PackageReleaseNotes>NotifyCollection added</PackageReleaseNotes>
+    <PackageReleaseNotes>FIX: Silent handling of task cancellation on PostToUi</PackageReleaseNotes>
     <RepositoryType>git</RepositoryType>
     <PackageIcon>jdUtilsIcon.png</PackageIcon>
     <PackageIconUrl />
-    <Version>1.0.10</Version>
+    <Version>1.0.10.1</Version>
     <UseWPF>true</UseWPF>
   </PropertyGroup>
   <ItemGroup>
