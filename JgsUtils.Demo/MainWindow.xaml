@@ -35,8 +35,10 @@
                           IsChecked="{Binding IsRunning}"
                           IsEnabled="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsChecked, Converter={cnv:NotConverter}}"
                           x:Name="Togglebackground"/>
-            <TextBlock Grid.Row="1"
-                       Text="{Binding ElementName=Togglebackground, Path=IsChecked}"/>
+            <StackPanel Grid.Row="1">
+                <TextBlock Text="{Binding ElementName=Togglebackground, Path=IsChecked}"/>
+                <TextBlock Text="{Binding BackgroundTest}"/>
+            </StackPanel>
         </Grid>
     </StackPanel>
 </Window>

@@ -22,6 +22,8 @@ namespace JgsUtils.Demo
             var t1 = E1.Collapsed;
             var cnv = new cnv.EnumConverter();
             var t2 = cnv.Convert(t1, typeof(Visibility), null, null);
+            m_index = 0;
+            m_delay = 3000;
             DataContext = this;
         }
 
@@ -29,10 +31,21 @@ namespace JgsUtils.Demo
         public event PropertyChangedEventHandler PropertyChanged;
 
         private bool m_isRunning;
+        private bool m_isProcessing;
+
         public bool IsRunning
         {
             get => m_isRunning;
             set => SetIsRunning(value);
+        }
+        private string m_backgroundTest;
+        private int m_index;
+        private readonly int m_delay;
+
+        public string BackgroundTest
+        {
+            get => m_backgroundTest;
+            set => SetProperty(ref m_backgroundTest, value);
         }
 
         private void SetIsRunning(bool value)
@@ -46,8 +59,39 @@ namespace JgsUtils.Demo
 
         private void StartOnBackground()
         {
-            Case01();
-            Case02();
+            if(!m_isProcessing)
+            {
+                m_isProcessing = true;
+                switch (m_index)
+                {
+                    case 0:
+                        Case01();
+                        break;
+                    case 1:
+                        Case02();
+                        break;
+                    case 2:
+                        Case03();
+                        break;
+                    case 3:
+                        Case04();
+                        break;
+                    case 4:
+                        Case05();
+                        m_index = -1;
+                        break;
+                    default:
+                        break;
+                }
+                m_index++;
+                m_isProcessing = false;
+            }
+        }
+
+        private void Prepare([CallerMemberName]string name = null)
+        {
+            IsRunning = true;
+            BackgroundTest = name;
         }
 
         private void Case01()
@@ -57,9 +101,10 @@ namespace JgsUtils.Demo
                 IsRunning = false;
             }
 
+            Prepare();
             new BackgroundWorkerBuilder(Dispatcher)
                 .Do(Work)
-                .AfterDelay(5000)
+                .AfterDelay(m_delay)
                 .Execute();
         }
 
@@ -74,10 +119,70 @@ namespace JgsUtils.Demo
                 IsRunning = false;
             }
 
+            Prepare();
             new BackgroundWorkerBuilder(Dispatcher)
                 .Do(Work)
                 .OnSuccess(Success)
-                .WithDelay(5000)
+                .WithDelay(m_delay)
+                .Execute();
+        }
+
+        private void Case03()
+        {
+            var number = 2;
+            void Work(int param)
+            {
+                number *= param;
+            }
+
+            void Success()
+            {
+                BackgroundTest += $" {number}";
+                IsRunning = false;
+            }
+
+            Prepare();
+            new BackgroundWorkerBuilder(Dispatcher)
+                .Do(Work, 3)
+                .OnSuccess(Success)
+                .WithDelay(m_delay)
+                .Execute();
+        }
+
+        private void Case04()
+        {
+            var number = 3;
+            int Work(int param)
+            {
+                return number * param;
+            }
+
+            void Success(int result)
+            {
+                BackgroundTest += $" {result}";
+                IsRunning = false;
+            }
+
+            Prepare();
+            new BackgroundWorkerBuilder(Dispatcher)
+                .Do(Work, 3)
+                .OnSuccess(Success)
+                .WithDelay(m_delay)
+                .Execute();
+        }
+
+        private void Case05()
+        {
+            void Work(int param)
+            {
+                BackgroundTest += $" {param}";
+                IsRunning = false;
+            }
+
+            Prepare();
+            new BackgroundWorkerBuilder(Dispatcher)
+                .Do(Work,6)
+                .AfterDelay(m_delay)
                 .Execute();
         }
 
