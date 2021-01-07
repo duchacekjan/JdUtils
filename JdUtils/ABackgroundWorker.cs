@@ -108,7 +108,7 @@ namespace JdUtils
         /// </summary>
         /// <param name="worker">Akce, která má být provedena na pozadí</param>
         /// <param name="failure">Custom error handler</param>
-        /// <param name="delay">Delay v milliseconds</param>
+        /// <param name="delay">Delay v milisekundách</param>
         protected void ExecuteSafe(Action worker, ExceptionHandler failure, int delay = 0)
         {
             Task.Run(async () =>

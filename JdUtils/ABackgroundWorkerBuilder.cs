@@ -4,6 +4,9 @@ using System.Windows.Threading;
 
 namespace JdUtils
 {
+    /// <summary>
+    /// Společný předek pro Background Worker buildry
+    /// </summary>
     public abstract class ABackgroundWorkerBuilder : ABackgroundWorker
     {
         protected ABackgroundWorkerBuilder(Dispatcher uiDispatcher)
@@ -16,12 +19,18 @@ namespace JdUtils
         {
         }
 
+        /// <summary>
+        /// Delay akce
+        /// </summary>
         protected int Delay { get; set; }
 
+        /// <summary>
+        /// Custom error handler
+        /// </summary>
         protected ExceptionHandler Failure { get; set; }
 
         /// <summary>
-        /// Runs execution
+        /// Provede zadané akce
         /// </summary>
         public void Execute()
         {
@@ -29,9 +38,10 @@ namespace JdUtils
         }
 
         /// <summary>
-        /// Executes data on background with defined delay. Values 0 or less means no delay
+        /// Definice Delay před spuštěním akce na pozadí. Pokud je <paramref name="delay"/> větší než 0,
+        /// použije se <see cref="System.Threading.Tasks.Task.Delay(int)"/>, jinak <see cref="System.Threading.Tasks.Task.CompletedTask"/>
         /// </summary>
-        /// <param name="delay"></param>
+        /// <param name="delay">Delay v milisekundách</param>
         /// <returns></returns>
         public ABackgroundWorker WithDelay(int delay)
         {
@@ -40,9 +50,10 @@ namespace JdUtils
         }
 
         /// <summary>
-        /// Action when execution fails. When not assigned, <see cref="UnhandledError"/> is invoked.
+        /// Nastavení custom error handleru. Není-li definován nebo je <see langword="null"/>,
+        /// tak se vyvolá event <see cref="UnhandledError"/>.
         /// </summary>
-        /// <param name="failureHandler"></param>
+        /// <param name="failureHandler">Custom error handler</param>
         /// <returns></returns>
         public ABackgroundWorker OnError(ExceptionHandler failureHandler)
         {
@@ -50,6 +61,11 @@ namespace JdUtils
             return this;
         }
 
+        /// <summary>
+        /// Akce, která má být vyvolána na pozadí. Spojuje volání akce na pozadí a volání
+        /// výsledku zpět na UI vlákně
+        /// </summary>
+        /// <returns></returns>
         protected abstract Action GetWorker();
     }
 }
