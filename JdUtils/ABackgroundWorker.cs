@@ -43,15 +43,48 @@ namespace JdUtils
         /// Invokes action on UI thread
         /// </summary>
         /// <param name="action"></param>
+        public static void PostToUi(Dispatcher dispatcher, Action action)
+        {
+            try
+            {
+                if (dispatcher?.CheckAccess() == true)
+                {
+                    action?.Invoke();
+                }
+                else
+                {
+                    dispatcher?.Invoke(action);
+                }
+            }
+            catch (OperationCanceledException)
+            {
+                ;//INFO Silent handling task cancellation
+            }
+        }
+
+        /// <summary>
+        /// Invokes action on UI thread
+        /// </summary>
+        /// <param name="action"></param>
         /// <param name="parameter"></param>
-        public void PostToUi<T>(Action<T> action, T parameter)
+        public static void PostToUi<T>(Dispatcher dispatcher, Action<T> action, T parameter)
         {
             void Wrapper()
             {
                 action?.Invoke(parameter);
             }
 
-            PostToUi(Wrapper);
+            PostToUi(dispatcher, Wrapper);
+        }
+
+        /// <summary>
+        /// Invokes action on UI thread
+        /// </summary>
+        /// <param name="action"></param>
+        /// <param name="parameter"></param>
+        public void PostToUi<T>(Action<T> action, T parameter)
+        {
+            PostToUi(Dispatcher, action, parameter);
         }
 
         /// <summary>
@@ -60,21 +93,7 @@ namespace JdUtils
         /// <param name="action"></param>
         public void PostToUi(Action action)
         {
-            try
-            {
-                if (Dispatcher.CheckAccess())
-                {
-                    action?.Invoke();
-                }
-                else
-                {
-                    Dispatcher.Invoke(action);
-                }
-            }
-            catch (OperationCanceledException)
-            {
-                ;//INFO Silent handling task cancellation
-            }
+            PostToUi(Dispatcher, action);
         }
 
         /// <summary>
