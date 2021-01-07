@@ -61,6 +61,15 @@ namespace JdUtils.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Dispatcher není z STA vlákna..
+        /// </summary>
+        internal static string BackgroundWorkerDispatherNotSTA {
+            get {
+                return ResourceManager.GetString("BackgroundWorkerDispatherNotSTA", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to executeMethod ani canExecuteMethod nesmí být null..
         /// </summary>
         internal static string DelegateCommandDelegatesCannotBeNull {

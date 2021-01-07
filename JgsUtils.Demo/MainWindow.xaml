@@ -25,5 +25,20 @@
                Height="100"
                Source="{m:UrlImage 'http://www.americanlayout.com/wp/wp-content/uploads/2012/08/C-To-Go-300x300.png'}"
                Stretch="Uniform"/>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <ToggleButton Content="Background"
+                          IsThreeState="False"
+                          IsChecked="{Binding IsRunning}"
+                          IsEnabled="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsChecked, Converter={cnv:NotConverter}}"
+                          x:Name="Togglebackground"/>
+            <StackPanel Grid.Row="1">
+                <TextBlock Text="{Binding ElementName=Togglebackground, Path=IsChecked}"/>
+                <TextBlock Text="{Binding BackgroundTest}"/>
+            </StackPanel>
+        </Grid>
     </StackPanel>
 </Window>
