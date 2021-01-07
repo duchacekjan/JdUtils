@@ -1,5 +1,5 @@
-﻿using JdUtils;
-using JdUtils.BackgroundWorker;
+﻿using JdUtils.BackgroundWorker;
+using JdUtils.BackgroundWorker.Interfaces;
 using JdUtils.Extensions;
 using System;
 using System.ComponentModel;
@@ -25,6 +25,7 @@ namespace JgsUtils.Demo
             var t2 = cnv.Convert(t1, typeof(Visibility), null, null);
             m_index = 0;
             m_delay = 3000;
+            m_executor = BackgroundExecutor.Instance(Dispatcher);
             DataContext = this;
         }
 
@@ -42,6 +43,7 @@ namespace JgsUtils.Demo
         private string m_backgroundTest;
         private int m_index;
         private readonly int m_delay;
+        private readonly IBackgroundExecutorInstance m_executor;
 
         public string BackgroundTest
         {
@@ -103,8 +105,9 @@ namespace JgsUtils.Demo
             }
 
             Prepare();
-            BackgroundWorkerBuilder
-                .Do(Work, Dispatcher)
+            BackgroundExecutor
+                .Instance(Dispatcher)
+                .Do(Work)
                 .AfterDelay(m_delay)
                 .Execute();
         }
@@ -121,8 +124,8 @@ namespace JgsUtils.Demo
             }
 
             Prepare();
-            BackgroundWorkerBuilder
-                .Do(Work, Dispatcher)
+            m_executor
+                .Do(Work)
                 .OnSuccess(Success)
                 .WithDelay(m_delay)
                 .Execute();
@@ -143,8 +146,8 @@ namespace JgsUtils.Demo
             }
 
             Prepare();
-            BackgroundWorkerBuilder
-                .Do(Work, 3, Dispatcher)
+            m_executor
+                .Do(Work, 3)
                 .OnSuccess(Success)
                 .WithDelay(m_delay)
                 .Execute();
@@ -165,8 +168,8 @@ namespace JgsUtils.Demo
             }
 
             Prepare();
-            BackgroundWorkerBuilder
-                .Do(Work, 3, Dispatcher)
+            m_executor
+                .Do(Work, 3)
                 .OnSuccess(Success)
                 .WithDelay(m_delay)
                 .Execute();
@@ -181,8 +184,8 @@ namespace JgsUtils.Demo
             }
 
             Prepare();
-            BackgroundWorkerBuilder
-                .Do(Work,6, Dispatcher)
+            m_executor
+                .Do(Work,6)
                 .AfterDelay(m_delay)
                 .Execute();
         }

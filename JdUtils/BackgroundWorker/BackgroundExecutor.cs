@@ -1,4 +1,5 @@
-﻿using System;
+﻿using JdUtils.BackgroundWorker.Interfaces;
+using System;
 using System.Windows.Threading;
 
 namespace JdUtils.BackgroundWorker
@@ -6,18 +7,23 @@ namespace JdUtils.BackgroundWorker
     /// <summary>
     /// Builder pro FluentApi volání práce na pozadí
     /// </summary>
-    public class BackgroundWorkerBuilder : ABackgroundWorkerBuilder
+    public class BackgroundExecutor : ABackgroundExecutor, IBackgroundExecutorInstance, IBackgroundExecutorAction
     {
         private Action m_worker;
         private Action m_success;
 
         /// <summary>
-        /// Konstruktor. Vytvoří novou instanci <see cref="BackgroundWorkerBuilder"/>.
+        /// Konstruktor. Vytvoří novou instanci <see cref="BackgroundExecutor"/>.
         /// </summary>
         /// <param name="uiDispatcher">UI dispatcher z STA vlákna</param>
-        private BackgroundWorkerBuilder(Dispatcher uiDispatcher)
+        private BackgroundExecutor(Dispatcher uiDispatcher)
             : base(uiDispatcher)
         {
+        }
+
+        public static IBackgroundExecutorInstance Instance(Dispatcher uiDispatcher)
+        {
+            return new BackgroundExecutor(uiDispatcher);
         }
 
         /// <summary>
@@ -25,16 +31,10 @@ namespace JdUtils.BackgroundWorker
         /// </summary>
         /// <param name="workAction">Akce</param>
         /// <returns></returns>
-        public static BackgroundWorkerBuilder Do(Action workAction, Dispatcher uiDispatcher)
+        public static IBackgroundExecutorAction Do(Action workAction, Dispatcher uiDispatcher)
         {
-            var result = new BackgroundWorkerBuilder(uiDispatcher)
-            {
-                Failure = null,
-                m_success = null,
-                Delay = 0,
-                m_worker = workAction
-            };
-            return result;
+            var result = Instance(uiDispatcher);
+            return result.Do(workAction);
         }
 
         /// <summary>
@@ -44,9 +44,10 @@ namespace JdUtils.BackgroundWorker
         /// <param name="workAction">Akce</param>
         /// <param name="param">Parametr akce</param>
         /// <returns></returns>
-        public static BackgroundWorkerBuilder Do<T>(Action<T> workAction, T param, Dispatcher uiDispatcher)
+        public static IBackgroundExecutorAction Do<T>(Action<T> workAction, T param, Dispatcher uiDispatcher)
         {
-            return Do(() => workAction?.Invoke(param), uiDispatcher);
+            var result = Instance(uiDispatcher);
+            return result.Do(workAction, param);
         }
 
         /// <summary>
@@ -55,9 +56,9 @@ namespace JdUtils.BackgroundWorker
         /// <typeparam name="TResult">Návratový typ funkce</typeparam>
         /// <param name="workFunction">Funkce</param>
         /// <returns></returns>
-        public static BackgroundWorkerBuilder<TResult> Do<TResult>(Func<TResult> workFunction, Dispatcher uiDispatcher)
+        public static IBackgroundExecutorFunction<TResult> Do<TResult>(Func<TResult> workFunction, Dispatcher uiDispatcher)
         {
-            return BackgroundWorkerBuilder<TResult>.Do(workFunction, uiDispatcher);
+            return BackgroundExecutor<TResult>.Do(workFunction, uiDispatcher);
         }
 
         /// <summary>
@@ -68,9 +69,33 @@ namespace JdUtils.BackgroundWorker
         /// <param name="workFunction">Funkce</param>
         /// <param name="param">Parametr funkce</param>
         /// <returns></returns>
-        public static BackgroundWorkerBuilder<TResult> Do<T, TResult>(Func<T, TResult> workFunction, T param, Dispatcher uiDispatcher)
+        public static IBackgroundExecutorFunction<TResult> Do<T, TResult>(Func<T, TResult> workFunction, T param, Dispatcher uiDispatcher)
         {
-            return BackgroundWorkerBuilder<TResult>.Do(workFunction, param, uiDispatcher);
+            return BackgroundExecutor<TResult>.Do(workFunction, param, uiDispatcher);
+        }
+
+        public IBackgroundExecutorAction Do(Action workAction)
+        {
+            Failure = null;
+            m_success = null;
+            Delay = 0;
+            m_worker = workAction;
+            return this;
+        }
+
+        public IBackgroundExecutorAction Do<T>(Action<T> workAction, T param)
+        {
+            return Do(() => workAction?.Invoke(param));
+        }
+
+        public IBackgroundExecutorFunction<TResult> Do<TResult>(Func<TResult> workFunction)
+        {
+            return Do(workFunction, Dispatcher);
+        }
+
+        public IBackgroundExecutorFunction<TResult> Do<T, TResult>(Func<T, TResult> workFunction, T param)
+        {
+            return Do(workFunction, param, Dispatcher);
         }
 
         /// <summary>
@@ -78,7 +103,7 @@ namespace JdUtils.BackgroundWorker
         /// </summary>
         /// <param name="successHandler"></param>
         /// <returns></returns>
-        public BackgroundWorkerBuilder OnSuccess(Action successHandler)
+        public IBackgroundExecutorCore OnSuccess(Action successHandler)
         {
             m_success = successHandler;
             return this;
@@ -90,7 +115,7 @@ namespace JdUtils.BackgroundWorker
         /// </summary>
         /// <param name="delay">Delay v milisekundách</param>
         /// <returns></returns>
-        public BackgroundWorkerBuilder AfterDelay(int delay = 0)
+        public IBackgroundExecutorCore AfterDelay(int delay = 0)
         {
             m_success = m_worker;
             m_worker = null;
@@ -105,9 +130,9 @@ namespace JdUtils.BackgroundWorker
         /// </summary>
         /// <param name="delay">Delay v milisekundách</param>
         /// <returns></returns>
-        public new BackgroundWorkerBuilder WithDelay(int delay)
+        public new BackgroundExecutor WithDelay(int delay)
         {
-            return (BackgroundWorkerBuilder)base.WithDelay(delay);
+            return (BackgroundExecutor)base.WithDelay(delay);
         }
 
         /// <summary>

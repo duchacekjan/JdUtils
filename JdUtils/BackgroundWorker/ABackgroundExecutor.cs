@@ -1,4 +1,5 @@
-﻿using JdUtils.Delegates;
+﻿using JdUtils.BackgroundWorker.Interfaces;
+using JdUtils.Delegates;
 using System;
 using System.Windows.Threading;
 
@@ -7,15 +8,10 @@ namespace JdUtils.BackgroundWorker
     /// <summary>
     /// Společný předek pro Background Worker buildry
     /// </summary>
-    public abstract class ABackgroundWorkerBuilder : ABackgroundWorker
+    public abstract class ABackgroundExecutor : ABackgroundWorker, IBackgroundExecutorCore
     {
-        protected ABackgroundWorkerBuilder(Dispatcher uiDispatcher)
+        protected ABackgroundExecutor(Dispatcher uiDispatcher)
             : base(uiDispatcher)
-        {
-        }
-
-        protected ABackgroundWorkerBuilder(ABackgroundWorkerBuilder builder)
-            : base(builder.Dispatcher)
         {
         }
 
@@ -44,7 +40,7 @@ namespace JdUtils.BackgroundWorker
         /// </summary>
         /// <param name="delay">Delay v milisekundách</param>
         /// <returns></returns>
-        public ABackgroundWorker WithDelay(int delay)
+        public IBackgroundExecutorCore WithDelay(int delay)
         {
             Delay = delay;
             return this;
@@ -56,7 +52,7 @@ namespace JdUtils.BackgroundWorker
         /// </summary>
         /// <param name="failureHandler">Custom error handler</param>
         /// <returns></returns>
-        public ABackgroundWorker OnError(ExceptionHandler failureHandler)
+        public IBackgroundExecutorCore OnError(ExceptionHandler failureHandler)
         {
             Failure = failureHandler;
             return this;
