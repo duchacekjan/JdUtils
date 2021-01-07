@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Threading;
 
-namespace JdUtils
+namespace JdUtils.BackgroundWorker
 {
     /// <summary>
     /// Builder pro FluentApi volání práce na pozadí
@@ -15,7 +15,7 @@ namespace JdUtils
         /// Konstruktor. Vytvoří novou instanci <see cref="BackgroundWorkerBuilder"/>.
         /// </summary>
         /// <param name="uiDispatcher">UI dispatcher z STA vlákna</param>
-        public BackgroundWorkerBuilder(Dispatcher uiDispatcher)
+        private BackgroundWorkerBuilder(Dispatcher uiDispatcher)
             : base(uiDispatcher)
         {
         }
@@ -25,13 +25,16 @@ namespace JdUtils
         /// </summary>
         /// <param name="workAction">Akce</param>
         /// <returns></returns>
-        public BackgroundWorkerBuilder Do(Action workAction)
+        public static BackgroundWorkerBuilder Do(Action workAction, Dispatcher uiDispatcher)
         {
-            Failure = null;
-            m_success = null;
-            Delay = 0;
-            m_worker = workAction;
-            return this;
+            var result = new BackgroundWorkerBuilder(uiDispatcher)
+            {
+                Failure = null,
+                m_success = null,
+                Delay = 0,
+                m_worker = workAction
+            };
+            return result;
         }
 
         /// <summary>
@@ -41,9 +44,9 @@ namespace JdUtils
         /// <param name="workAction">Akce</param>
         /// <param name="param">Parametr akce</param>
         /// <returns></returns>
-        public BackgroundWorkerBuilder Do<T>(Action<T> workAction, T param)
+        public static BackgroundWorkerBuilder Do<T>(Action<T> workAction, T param, Dispatcher uiDispatcher)
         {
-            return Do(() => workAction?.Invoke(param));
+            return Do(() => workAction?.Invoke(param), uiDispatcher);
         }
 
         /// <summary>
@@ -52,10 +55,9 @@ namespace JdUtils
         /// <typeparam name="TResult">Návratový typ funkce</typeparam>
         /// <param name="workFunction">Funkce</param>
         /// <returns></returns>
-        public BackgroundWorkerBuilder<TResult> Do<TResult>(Func<TResult> workFunction)
+        public static BackgroundWorkerBuilder<TResult> Do<TResult>(Func<TResult> workFunction, Dispatcher uiDispatcher)
         {
-            return new BackgroundWorkerBuilder<TResult>(this)
-                .Do(workFunction);
+            return BackgroundWorkerBuilder<TResult>.Do(workFunction, uiDispatcher);
         }
 
         /// <summary>
@@ -66,10 +68,9 @@ namespace JdUtils
         /// <param name="workFunction">Funkce</param>
         /// <param name="param">Parametr funkce</param>
         /// <returns></returns>
-        public BackgroundWorkerBuilder<TResult> Do<T, TResult>(Func<T, TResult> workFunction, T param)
+        public static BackgroundWorkerBuilder<TResult> Do<T, TResult>(Func<T, TResult> workFunction, T param, Dispatcher uiDispatcher)
         {
-            return new BackgroundWorkerBuilder<TResult>(this)
-                .Do(workFunction, param);
+            return BackgroundWorkerBuilder<TResult>.Do(workFunction, param, uiDispatcher);
         }
 
         /// <summary>

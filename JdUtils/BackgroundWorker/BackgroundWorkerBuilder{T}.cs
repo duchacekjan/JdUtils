@@ -1,14 +1,15 @@
 ﻿using System;
+using System.Windows.Threading;
 
-namespace JdUtils
+namespace JdUtils.BackgroundWorker
 {
     public class BackgroundWorkerBuilder<TResult> : ABackgroundWorkerBuilder
     {
         private Func<TResult> m_worker;
         private Action<TResult> m_success;
 
-        internal BackgroundWorkerBuilder(ABackgroundWorkerBuilder builder)
-            : base(builder)
+        private BackgroundWorkerBuilder(Dispatcher uiDispatcher)
+            : base(uiDispatcher)
         {
         }
 
@@ -22,19 +23,24 @@ namespace JdUtils
             return (BackgroundWorkerBuilder<TResult>)base.WithDelay(delay);
         }
 
-        public BackgroundWorkerBuilder<TResult> Do(Func<TResult> workFunction)
+        public static BackgroundWorkerBuilder<T> Do<T>(Func<T> workFunction, Dispatcher uiDispatcher)
         {
-            m_worker = workFunction;
-            return this;
+            return new BackgroundWorkerBuilder<T>(uiDispatcher)
+            {
+                m_worker = workFunction
+            };
         }
 
-        public BackgroundWorkerBuilder<TResult> Do<T>(Func<T, TResult> workFunction, T param)
+        public static BackgroundWorkerBuilder<TRes> Do<T, TRes>(Func<T, TRes> workFunction, T param, Dispatcher uiDispatcher)
         {
+            var result = new BackgroundWorkerBuilder<TRes>(uiDispatcher);
+
             if (workFunction != null)
             {
-                m_worker = () => workFunction.Invoke(param);
+                result.m_worker = () => workFunction.Invoke(param);
             }
-            return this;
+
+            return result;
         }
 
         public BackgroundWorkerBuilder<TResult> OnSuccess(Action<TResult> successHandler)

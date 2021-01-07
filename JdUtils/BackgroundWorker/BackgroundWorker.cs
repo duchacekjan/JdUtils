@@ -2,7 +2,7 @@
 using System.Windows.Threading;
 using JdUtils.Delegates;
 
-namespace JdUtils
+namespace JdUtils.BackgroundWorker
 {
     /// <summary>
     /// Utility for work on background thread

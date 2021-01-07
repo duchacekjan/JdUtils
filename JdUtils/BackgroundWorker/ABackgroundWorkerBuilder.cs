@@ -2,7 +2,7 @@
 using System;
 using System.Windows.Threading;
 
-namespace JdUtils
+namespace JdUtils.BackgroundWorker
 {
     /// <summary>
     /// Společný předek pro Background Worker buildry

@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using System.Windows.Threading;
 using resx = JdUtils.Resources.Resources;
 
-namespace JdUtils
+namespace JdUtils.BackgroundWorker
 {
     /// <summary>
     /// Společný předek pro background workery

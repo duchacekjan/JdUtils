@@ -1,4 +1,5 @@
 ﻿using JdUtils;
+using JdUtils.BackgroundWorker;
 using JdUtils.Extensions;
 using System;
 using System.ComponentModel;
@@ -102,8 +103,8 @@ namespace JgsUtils.Demo
             }
 
             Prepare();
-            new BackgroundWorkerBuilder(Dispatcher)
-                .Do(Work)
+            BackgroundWorkerBuilder
+                .Do(Work, Dispatcher)
                 .AfterDelay(m_delay)
                 .Execute();
         }
@@ -120,8 +121,8 @@ namespace JgsUtils.Demo
             }
 
             Prepare();
-            new BackgroundWorkerBuilder(Dispatcher)
-                .Do(Work)
+            BackgroundWorkerBuilder
+                .Do(Work, Dispatcher)
                 .OnSuccess(Success)
                 .WithDelay(m_delay)
                 .Execute();
@@ -142,8 +143,8 @@ namespace JgsUtils.Demo
             }
 
             Prepare();
-            new BackgroundWorkerBuilder(Dispatcher)
-                .Do(Work, 3)
+            BackgroundWorkerBuilder
+                .Do(Work, 3, Dispatcher)
                 .OnSuccess(Success)
                 .WithDelay(m_delay)
                 .Execute();
@@ -164,8 +165,8 @@ namespace JgsUtils.Demo
             }
 
             Prepare();
-            new BackgroundWorkerBuilder(Dispatcher)
-                .Do(Work, 3)
+            BackgroundWorkerBuilder
+                .Do(Work, 3, Dispatcher)
                 .OnSuccess(Success)
                 .WithDelay(m_delay)
                 .Execute();
@@ -180,8 +181,8 @@ namespace JgsUtils.Demo
             }
 
             Prepare();
-            new BackgroundWorkerBuilder(Dispatcher)
-                .Do(Work,6)
+            BackgroundWorkerBuilder
+                .Do(Work,6, Dispatcher)
                 .AfterDelay(m_delay)
                 .Execute();
         }
