@@ -3,15 +3,15 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Threading;
+using resx = JdUtils.Resources.Resources;
 
 namespace JdUtils
 {
+    /// <summary>
+    /// Společný předek pro background workery
+    /// </summary>
     public abstract class ABackgroundWorker
     {
-        /// <summary>
-        /// Constructor. Creates new instance of <see cref="BackgroundWorker"/>
-        /// </summary>
-        /// <param name="uiDispatcher"><see cref="Dispatcher"/> from UI thread</param>
         protected ABackgroundWorker(Dispatcher uiDispatcher)
         {
             if (uiDispatcher == null)
@@ -21,28 +21,32 @@ namespace JdUtils
 
             if (uiDispatcher.Thread.GetApartmentState() != ApartmentState.STA)
             {
-                throw new ArgumentOutOfRangeException(nameof(uiDispatcher), "Dispatcher is not from STA thread");
+                throw new ArgumentOutOfRangeException(nameof(uiDispatcher), resx.BackgroundWorkerDispatherNotSTA);
             }
 
             Dispatcher = uiDispatcher;
         }
 
         /// <summary>
-        /// Event invoked when unhandled error occured
+        /// Event vyvolán, pokud se objeví neošetřená chyba
         /// </summary>
         public event ExceptionHandler UnhandledError;
 
         /// <summary>
-        /// Event invoked when error occured
+        /// Event vyvolán při chybě
         /// </summary>
         public event ExceptionHandler LogError;
 
+        /// <summary>
+        /// UI dispatcher
+        /// </summary>
         protected Dispatcher Dispatcher { get; }
 
         /// <summary>
-        /// Invokes action on UI thread
+        /// Vyvolá akci na UI vlákně pomoci předaného <paramref name="dispatcher"/>
         /// </summary>
-        /// <param name="action"></param>
+        /// <param name="dispatcher">UI dispatcher</param>
+        /// <param name="action">Akce</param>
         public static void PostToUi(Dispatcher dispatcher, Action action)
         {
             try
@@ -63,10 +67,11 @@ namespace JdUtils
         }
 
         /// <summary>
-        /// Invokes action on UI thread
+        /// Vyvolá akci na UI vlákně pomoci předaného <paramref name="dispatcher"/>
         /// </summary>
-        /// <param name="action"></param>
-        /// <param name="parameter"></param>
+        /// <param name="dispatcher">UI dispatcher</param>
+        /// <param name="action">Akce</param>
+        /// <param name="parameter">Parametr akce</param>
         public static void PostToUi<T>(Dispatcher dispatcher, Action<T> action, T parameter)
         {
             void Wrapper()
@@ -78,33 +83,32 @@ namespace JdUtils
         }
 
         /// <summary>
-        /// Invokes action on UI thread
+        /// Vyvolá akci na UI vlákně
         /// </summary>
-        /// <param name="action"></param>
-        /// <param name="parameter"></param>
+        /// <param name="action">Akce</param>
+        /// <param name="parameter">Parametr akce</param>
         public void PostToUi<T>(Action<T> action, T parameter)
         {
             PostToUi(Dispatcher, action, parameter);
         }
 
         /// <summary>
-        /// Invokes action on UI thread
+        /// Vyvolá akci na UI vlákně
         /// </summary>
-        /// <param name="action"></param>
+        /// <param name="action">Akce</param>
         public void PostToUi(Action action)
         {
             PostToUi(Dispatcher, action);
         }
 
         /// <summary>
-        /// Executes action <paramref name="worker"/> on background thread wrapped in
-        /// try/catch clause. If <paramref name="delay"/> is 0 is invoked Task.CompletedTask,
-        /// otherwise is invoked Task.Delay
+        /// Provede akci <paramref name="worker"/> na pozadí. Akce je obalena v
+        /// try/catch klauzuli. Pokud <paramref name="delay"/> je větší než 0 je vyvoláno <see cref="Task.Delay(int)"/>,
+        /// jinak je vyvoláno <see cref="Task.CompletedTask"/> před spuštěním akce
         /// </summary>
-        /// <param name="worker">Action to be executed on background thread</param>
+        /// <param name="worker">Akce, která má být provedena na pozadí</param>
         /// <param name="failure">Custom error handler</param>
-        /// <param name="delay">Delay in milliseconds</param>
-        /// <exception cref="ArgumentOutOfRangeException">Negative delay</exception>
+        /// <param name="delay">Delay v milliseconds</param>
         protected void ExecuteSafe(Action worker, ExceptionHandler failure, int delay = 0)
         {
             Task.Run(async () =>
@@ -130,10 +134,10 @@ namespace JdUtils
         }
 
         /// <summary>
-        /// Hadling error on background thread. Method invokes <see cref="LogError"/> event
-        /// and if is not defined custom handler (<paramref name="failure"/>), invokes <see cref="UnhandledError"/>
+        /// Ošetření chyby. Metoda vyvolá <see cref="LogError"/> event
+        /// a pokud není definován (<paramref name="failure"/>), vyvolá event <see cref="UnhandledError"/>
         /// </summary>
-        /// <param name="exception">Occured exception</param>
+        /// <param name="exception">Výjimka, která nastala</param>
         /// <param name="failure">Custom handler</param>
         private void OnException(Exception exception, ExceptionHandler failure)
         {
