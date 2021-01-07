@@ -39,7 +39,8 @@ namespace JdUtils
 
         /// <summary>
         /// Definice Delay před spuštěním akce na pozadí. Pokud je <paramref name="delay"/> větší než 0,
-        /// použije se <see cref="System.Threading.Tasks.Task.Delay(int)"/>, jinak <see cref="System.Threading.Tasks.Task.CompletedTask"/>
+        /// použije se <see cref="System.Threading.Tasks.Task.Delay(int)"/>,
+        /// jinak <see cref="System.Threading.Tasks.Task.CompletedTask"/>
         /// </summary>
         /// <param name="delay">Delay v milisekundách</param>
         /// <returns></returns>
