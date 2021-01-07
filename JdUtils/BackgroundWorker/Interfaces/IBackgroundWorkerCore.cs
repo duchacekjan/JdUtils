@@ -2,6 +2,9 @@
 
 namespace JdUtils.BackgroundWorker.Interfaces
 {
+    /// <summary>
+    /// Rozhraní se základními metodami background executora
+    /// </summary>
     public interface IBackgroundExecutorCore
     {
         /// <summary>

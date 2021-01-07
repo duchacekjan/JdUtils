@@ -2,6 +2,9 @@
 
 namespace JdUtils.BackgroundWorker.Interfaces
 {
+    /// <summary>
+    /// Rozhraní pro výsledek akce zpracovávané na pozadí
+    /// </summary>
     public interface IBackgroundExecutorAction : IBackgroundExecutorCore
     {
         /// <summary>

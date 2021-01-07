@@ -5,7 +5,7 @@ using System.Windows.Threading;
 namespace JdUtils.BackgroundWorker
 {
     /// <summary>
-    /// Builder pro FluentApi volání práce na pozadí
+    /// FluentApi volání práce na pozadí
     /// </summary>
     public class BackgroundExecutor : ABackgroundExecutor, IBackgroundExecutorInstance, IBackgroundExecutorAction
     {
@@ -21,6 +21,11 @@ namespace JdUtils.BackgroundWorker
         {
         }
 
+        /// <summary>
+        /// Vrátí instanci executora
+        /// </summary>
+        /// <param name="uiDispatcher">UI dispatcher z STA vlákna</param>
+        /// <returns></returns>
         public static IBackgroundExecutorInstance Instance(Dispatcher uiDispatcher)
         {
             return new BackgroundExecutor(uiDispatcher);
@@ -30,6 +35,7 @@ namespace JdUtils.BackgroundWorker
         /// Akce, která se má provést na pozadí
         /// </summary>
         /// <param name="workAction">Akce</param>
+        /// <param name="uiDispatcher">UI dispatcher z STA vlákna</param>
         /// <returns></returns>
         public static IBackgroundExecutorAction Do(Action workAction, Dispatcher uiDispatcher)
         {
@@ -43,6 +49,7 @@ namespace JdUtils.BackgroundWorker
         /// <typeparam name="T">Typ parametru akce</typeparam>
         /// <param name="workAction">Akce</param>
         /// <param name="param">Parametr akce</param>
+        /// <param name="uiDispatcher">UI dispatcher z STA vlákna</param>
         /// <returns></returns>
         public static IBackgroundExecutorAction Do<T>(Action<T> workAction, T param, Dispatcher uiDispatcher)
         {
@@ -55,6 +62,7 @@ namespace JdUtils.BackgroundWorker
         /// </summary>
         /// <typeparam name="TResult">Návratový typ funkce</typeparam>
         /// <param name="workFunction">Funkce</param>
+        /// <param name="uiDispatcher">UI dispatcher z STA vlákna</param>
         /// <returns></returns>
         public static IBackgroundExecutorFunction<TResult> Do<TResult>(Func<TResult> workFunction, Dispatcher uiDispatcher)
         {
@@ -68,12 +76,18 @@ namespace JdUtils.BackgroundWorker
         /// <typeparam name="TResult">Návratový typ funkce</typeparam>
         /// <param name="workFunction">Funkce</param>
         /// <param name="param">Parametr funkce</param>
+        /// <param name="uiDispatcher">UI dispatcher z STA vlákna</param>
         /// <returns></returns>
         public static IBackgroundExecutorFunction<TResult> Do<T, TResult>(Func<T, TResult> workFunction, T param, Dispatcher uiDispatcher)
         {
             return BackgroundExecutor<TResult>.Do(workFunction, param, uiDispatcher);
         }
 
+        /// <summary>
+        /// Akce, která se má provést na pozadí
+        /// </summary>
+        /// <param name="workAction">Akce</param>
+        /// <returns></returns>
         public IBackgroundExecutorAction Do(Action workAction)
         {
             Failure = null;
@@ -83,16 +97,37 @@ namespace JdUtils.BackgroundWorker
             return this;
         }
 
+        /// <summary>
+        /// Akce, která se má provést na pozadí
+        /// </summary>
+        /// <typeparam name="T">Typ parametru akce</typeparam>
+        /// <param name="workAction">Akce</param>
+        /// <param name="param">Parametr akce</param>
+        /// <returns></returns>
         public IBackgroundExecutorAction Do<T>(Action<T> workAction, T param)
         {
             return Do(() => workAction?.Invoke(param));
         }
 
+        /// <summary>
+        /// Funkce, která se má provést na pozadí
+        /// </summary>
+        /// <typeparam name="TResult">Návratový typ funkce</typeparam>
+        /// <param name="workFunction">Funkce</param>
+        /// <returns></returns>
         public IBackgroundExecutorFunction<TResult> Do<TResult>(Func<TResult> workFunction)
         {
             return Do(workFunction, Dispatcher);
         }
 
+        /// <summary>
+        /// Funkce, která se má provést na pozadí
+        /// </summary>
+        /// <typeparam name="T">Typ parametru funkce</typeparam>
+        /// <typeparam name="TResult">Návratový typ funkce</typeparam>
+        /// <param name="workFunction">Funkce</param>
+        /// <param name="param">Parametr funkce</param>
+        /// <returns></returns>
         public IBackgroundExecutorFunction<TResult> Do<T, TResult>(Func<T, TResult> workFunction, T param)
         {
             return Do(workFunction, param, Dispatcher);

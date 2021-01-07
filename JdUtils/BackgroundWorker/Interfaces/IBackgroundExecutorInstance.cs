@@ -2,6 +2,9 @@
 
 namespace JdUtils.BackgroundWorker.Interfaces
 {
+    /// <summary>
+    /// Interface pro přístup na první metody builderu
+    /// </summary>
     public interface IBackgroundExecutorInstance
     {
         /// <summary>
